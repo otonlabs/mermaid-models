@@ -789,22 +789,25 @@ Script que usa `npx @mermaid-js/mermaid-cli` para validar a sintaxe dos arquivos
 
 4. **Corrigir** quaisquer erros de validação
 
-## Requisito: Layout Manhattan (ELK Orthogonal Routing)
+## Requisito: Layout Limpo sem Sobreposição (ELK Orthogonal Routing)
 
-**Todos os diagramas `.mmd` devem usar o layout ELK com roteamento ortogonal (Manhattan)** para garantir que as linhas de conexão (edges) usem apenas segmentos horizontais e verticais, evitando sobreposição de linhas e melhorando a legibilidade dos diagramas.
+**Todos os diagramas `.mmd` devem usar o layout ELK otimizado para evitar que linhas (edges) sobreponham caixas (nodes/boundaries)** nos diagramas C4, garantindo legibilidade mesmo em diagramas complexos com múltiplas boundaries (Security Layer, Observability Layer, domínio).
 
-### Por que Manhattan Routing?
+### Problema
 
-Em diagramas C4 complexos com muitos componentes, boundaries e conexões, o layout padrão (dagre) pode gerar:
-- **Linhas sobrepostas** — edges cruzando uns sobre os outros
-- **Linhas diagonais** — difíceis de seguir visualmente
-- **Rótulos sobrepostos** — labels de relacionamentos se sobrepondo
+Em diagramas C4 com 10+ componentes, 3 boundaries e muitas conexões, o layout padrão (dagre) e configurações ELK não otimizadas podem gerar:
+- **Linhas cruzando sobre caixas** — edges passando por cima de nodes/boundaries
+- **Linhas sobrepostas entre si** — múltiplos edges usando o mesmo caminho visual
+- **Rótulos sobrepostos** — labels de relacionamentos ilegíveis
+- **Espaçamento insuficiente** — nodes muito próximos, sem espaço para routing de edges
 
-O layout **ELK (Eclipse Layout Kernel)** com `mergeEdges: true` e `nodePlacementStrategy: LINEAR_SEGMENTS` resolve esses problemas usando roteamento ortogonal (apenas linhas horizontais e verticais, como ruas de Manhattan).
+### Solução: ELK com NETWORK_SIMPLEX
+
+O layout **ELK (Eclipse Layout Kernel)** com `nodePlacementStrategy: NETWORK_SIMPLEX` minimiza o comprimento total das edges e otimiza o posicionamento dos nós para reduzir cruzamentos. Combinado com `mergeEdges: true` e `cycleBreakingStrategy: GREEDY`, produz diagramas significativamente mais limpos.
 
 ### Configuração YAML Frontmatter
 
-Todo arquivo `.mmd` deve incluir um **bloco YAML frontmatter** antes da declaração C4:
+Todo arquivo `.mmd` deve incluir o bloco YAML frontmatter **antes** da declaração C4:
 
 ```yaml
 ---
@@ -812,21 +815,39 @@ config:
   layout: elk
   elk:
     mergeEdges: true
-    nodePlacementStrategy: LINEAR_SEGMENTS
+    nodePlacementStrategy: NETWORK_SIMPLEX
+    cycleBreakingStrategy: GREEDY
+  c4:
+    diagramMarginX: 25
+    diagramMarginY: 25
 ---
 C4Context
     title ...
 ```
 
-### Opções de Configuração ELK
+### Opções de Configuração ELK (via Mermaid Config Schema)
 
-| Opção | Valor | Descrição |
-|-------|-------|-----------|
-| `layout` | `elk` | Ativa o Eclipse Layout Kernel em vez do dagre padrão |
-| `elk.mergeEdges` | `true` | Mescla edges paralelos entre os mesmos nós, reduzindo visual clutter |
-| `elk.nodePlacementStrategy` | `LINEAR_SEGMENTS` | Alinha nós em segmentos lineares para layout mais organizado |
+| Opção | Valor | Alternativas | Descrição |
+|-------|-------|-------------|-----------|
+| `layout` | `elk` | `dagre` | Ativa o Eclipse Layout Kernel — melhor para diagramas complexos |
+| `elk.mergeEdges` | `true` | `false` | Mescla edges paralelos entre mesmos nós, reduzindo linhas sobrepostas |
+| `elk.nodePlacementStrategy` | `NETWORK_SIMPLEX` | `LINEAR_SEGMENTS`, `BRANDES_KOEPF`, `SIMPLE` | **NETWORK_SIMPLEX** minimiza comprimento total das edges e reduz cruzamentos — melhor para grafos densos |
+| `elk.cycleBreakingStrategy` | `GREEDY` | `DEPTH_FIRST`, `INTERACTIVE`, `MODEL_ORDER`, `GREEDY_MODEL_ORDER` | **GREEDY** produz menos inversões de edges em grafos complexos |
+| `elk.considerModelOrder` | `NODES_AND_EDGES` | `NONE`, `PREFER_EDGES`, `PREFER_NODES` | Preserva ordem dos nós/edges do modelo, evitando cruzamentos desnecessários (default) |
+| `c4.diagramMarginX` | `25` | — | Margem horizontal extra no diagrama C4 para espaço de routing |
+| `c4.diagramMarginY` | `25` | — | Margem vertical extra no diagrama C4 para espaço de routing |
 
-### Exemplo Completo com ELK
+### Por que NETWORK_SIMPLEX em vez de LINEAR_SEGMENTS?
+
+| Aspecto | LINEAR_SEGMENTS | NETWORK_SIMPLEX |
+|---------|----------------|-----------------|
+| **Alinhamento** | Alinha nós em segmentos lineares | Minimiza comprimento total das edges |
+| **Cruzamentos** | Pode gerar mais cruzamentos | Otimiza para menos cruzamentos |
+| **Diagramas densos** | Pode comprimir nós verticalmente | Distribui melhor o espaçamento |
+| **Edges longas** | Edges longas podem cruzar nós | Edges longas são roteadas com mais espaço |
+| **Ideal para** | Diagramas simples e lineares | **Diagramas C4 complexos com múltiplas boundaries** |
+
+### Exemplo Completo
 
 ```mermaid
 ---
@@ -834,7 +855,11 @@ config:
   layout: elk
   elk:
     mergeEdges: true
-    nodePlacementStrategy: LINEAR_SEGMENTS
+    nodePlacementStrategy: NETWORK_SIMPLEX
+    cycleBreakingStrategy: GREEDY
+  c4:
+    diagramMarginX: 25
+    diagramMarginY: 25
 ---
 C4Container
     title PIX SPI - Saga Orchestration [AWS / Java 21 / Spring Boot 3]
@@ -847,7 +872,14 @@ C4Container
         ContainerDb(tx_store, "Transaction Store", "Aurora", "Pagamentos", $sprite="img:...")
     }
 
-    Rel(pagador, spi_gw, "Inicia PIX", "HTTPS")
+    Container_Boundary(sec0, "Security Layer") {
+        Container(ory_oathkeeper, "Ory Oathkeeper", "Go", "Zero Trust proxy", $sprite="img:...")
+        Container(ory_kratos, "Ory Kratos", "Go", "Identity management", $sprite="img:...")
+    }
+
+    Rel(pagador, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session", "HTTPS")
+    Rel(ory_oathkeeper, spi_gw, "Roteia autenticado", "HTTPS")
     Rel(spi_gw, saga, "Inicia saga", "gRPC")
     Rel(saga, tx_store, "Persiste", "JDBC")
 
@@ -855,14 +887,21 @@ C4Container
 ```
 
 ### Regras
-1. **Todo arquivo `.mmd` deve iniciar com o bloco YAML frontmatter** contendo a configuração ELK
+1. **Todo arquivo `.mmd` deve iniciar com o bloco YAML frontmatter** contendo a configuração ELK completa
 2. O bloco YAML deve estar **antes** da declaração `C4Context`, `C4Container` ou `C4Component`
 3. O frontmatter usa delimitadores `---` (início e fim)
-4. As 3 propriedades (`layout`, `mergeEdges`, `nodePlacementStrategy`) são **obrigatórias**
-5. **Não** usar o layout dagre padrão — sempre usar ELK para consistência visual
+4. As propriedades obrigatórias são: `layout: elk`, `elk.mergeEdges`, `elk.nodePlacementStrategy`, `elk.cycleBreakingStrategy`, `c4.diagramMarginX`, `c4.diagramMarginY`
+5. **Sempre** usar `NETWORK_SIMPLEX` para nodePlacement — é o melhor para diagramas C4 densos
+6. **Não** usar o layout dagre padrão — sempre usar ELK para consistência visual
 
 ### Nota sobre Compatibilidade
 O layout ELK requer Mermaid 9.4+ e o plugin `mermaid-layout-elk`. Em ambientes que não suportam ELK, o frontmatter é ignorado graciosamente e o layout dagre padrão é usado como fallback.
+
+### Referências
+- [Mermaid ELK Config Schema](https://mermaid.js.org/config/schema-docs/config-properties-elk.html)
+- [ELK Layered Algorithm](https://eclipse.dev/elk/reference/algorithms/org-eclipse-elk-layered.html)
+- [ELK Edge Routing](https://eclipse.dev/elk/reference/options/org-eclipse-elk-edgeRouting.html)
+- [ELK Spacing Documentation](https://eclipse.dev/elk/documentation/tooldevelopers/graphdatastructure/spacingdocumentation.html)
 
 ## Sintaxe C4 Mermaid Confirmada (via Context7)
 
@@ -873,7 +912,11 @@ config:
   layout: elk
   elk:
     mergeEdges: true
-    nodePlacementStrategy: LINEAR_SEGMENTS
+    nodePlacementStrategy: NETWORK_SIMPLEX
+    cycleBreakingStrategy: GREEDY
+  c4:
+    diagramMarginX: 25
+    diagramMarginY: 25
 ---
 C4Context
   title ...
@@ -899,7 +942,11 @@ config:
   layout: elk
   elk:
     mergeEdges: true
-    nodePlacementStrategy: LINEAR_SEGMENTS
+    nodePlacementStrategy: NETWORK_SIMPLEX
+    cycleBreakingStrategy: GREEDY
+  c4:
+    diagramMarginX: 25
+    diagramMarginY: 25
 ---
 C4Container
   title ...
@@ -922,7 +969,11 @@ config:
   layout: elk
   elk:
     mergeEdges: true
-    nodePlacementStrategy: LINEAR_SEGMENTS
+    nodePlacementStrategy: NETWORK_SIMPLEX
+    cycleBreakingStrategy: GREEDY
+  c4:
+    diagramMarginX: 25
+    diagramMarginY: 25
 ---
 C4Component
   title ...
@@ -955,4 +1006,4 @@ C4Component
 14. Confirmar presença do **Datadog** nos diagramas: `grep -rl 'Datadog\|DD Tracer\|DogStatsD\|APM Tracer\|Datadog Agent\|dd-trace' models/ --include="*.mmd" | wc -l` (deve ser > 0 em todos os domínios)
 15. Confirmar presença da **Observability Layer** ou componentes Datadog em todos os níveis C4
 16. Confirmar presença do **bloco YAML frontmatter ELK** em todos os `.mmd`: `grep -rl 'layout: elk' models/ --include="*.mmd" | wc -l` (deve ser igual ao total de `.mmd`)
-17. Confirmar que o frontmatter contém `mergeEdges: true` e `nodePlacementStrategy: LINEAR_SEGMENTS`
+17. Confirmar que o frontmatter contém `nodePlacementStrategy: NETWORK_SIMPLEX`, `cycleBreakingStrategy: GREEDY` e `c4.diagramMarginX/Y: 25`

@@ -3,7 +3,11 @@ config:
   layout: elk
   elk:
     mergeEdges: true
-    nodePlacementStrategy: LINEAR_SEGMENTS
+    nodePlacementStrategy: NETWORK_SIMPLEX
+    cycleBreakingStrategy: GREEDY
+  c4:
+    diagramMarginX: 25
+    diagramMarginY: 25
 ---
 C4Container
     title RSFN Connect - Outbox Pattern Container View [Oracle Cloud / Java 21 / Spring Boot 3]

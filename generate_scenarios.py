@@ -429,7 +429,11 @@ config:
   layout: elk
   elk:
     mergeEdges: true
-    nodePlacementStrategy: LINEAR_SEGMENTS
+    nodePlacementStrategy: NETWORK_SIMPLEX
+    cycleBreakingStrategy: GREEDY
+  c4:
+    diagramMarginX: 25
+    diagramMarginY: 25
 ---"""
 
 

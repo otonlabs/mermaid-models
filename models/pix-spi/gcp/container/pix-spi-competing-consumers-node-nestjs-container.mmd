@@ -3,7 +3,11 @@ config:
   layout: elk
   elk:
     mergeEdges: true
-    nodePlacementStrategy: LINEAR_SEGMENTS
+    nodePlacementStrategy: NETWORK_SIMPLEX
+    cycleBreakingStrategy: GREEDY
+  c4:
+    diagramMarginX: 25
+    diagramMarginY: 25
 ---
 C4Container
     title Pool de Workers SPI com Competing Consumers [GCP / Node.js / NestJS]
