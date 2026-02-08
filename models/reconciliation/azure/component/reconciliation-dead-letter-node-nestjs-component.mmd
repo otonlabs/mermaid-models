@@ -1,0 +1,43 @@
+C4Component
+    title Reconciliation - Dead Letter - Component View [Azure / Node.js / NestJS]
+
+    Container(api_layer, "Reconciliation API", "NestJS REST", "Camada de API do dominio", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
+    ContainerDb(main_db, "Database", "Azure SQL Database", "Banco de dados principal", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/SQL-Database.svg")
+    ContainerQueue(msg_queue, "Message Queue", "Service Bus Queue", "Fila de mensagens", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/Service-Bus.svg")
+
+    Container_Boundary(comp0, "Reconciliation Dead Letter") {
+        Component(DLQ_Consumer, "DLQ Consumer", "Bull + NestJS Microservices", "Responsavel por dlq consumer", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/Function-Apps.svg")
+        Component(Retry_Scheduler, "Retry Scheduler", "NestJS", "Responsavel por retry scheduler", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        Component(Poison_Detector, "Poison Detector", "NestJS", "Responsavel por poison detector", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        Component(Alert_Notifier, "Alert Notifier", "Bull + NestJS Microservices", "Responsavel por alert notifier", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/Function-Apps.svg")
+        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")
+        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")
+        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")
+        Component(dd_tracer, "DD Tracer", "dd-trace-js", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")
+        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")
+        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")
+    }
+
+    Rel(api_layer, ory_identity_handler, "Valida identity/session", "Internal")
+    Rel(ory_identity_handler, DLQ_Consumer, "Autoriza e delega", "Internal")
+    Rel(DLQ_Consumer, ory_permission_checker, "Verifica permissao", "Internal")
+    Rel(DLQ_Consumer, opa_policy_evaluator, "Avalia policy de negocio", "Internal")
+    Rel(DLQ_Consumer, Retry_Scheduler, "Delega para", "Internal")
+    Rel(Retry_Scheduler, Poison_Detector, "Delega para", "Internal")
+    Rel(Poison_Detector, Alert_Notifier, "Delega para", "Internal")
+    Rel(Alert_Notifier, main_db, "Lê/Escreve", "Azure SQL Database")
+    Rel(DLQ_Consumer, msg_queue, "Publica em", "Service Bus Queue")
+    Rel(DLQ_Consumer, dd_tracer, "Cria spans", "Internal")
+    Rel(Alert_Notifier, dd_metrics_client, "Emite metricas", "DogStatsD")
+    Rel(DLQ_Consumer, dd_log_enricher, "Enriquece logs com trace context", "Internal")
+
+    UpdateElementStyle(DLQ_Consumer, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Retry_Scheduler, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Poison_Detector, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Alert_Notifier, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_identity_handler, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_permission_checker, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(opa_policy_evaluator, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_tracer, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_metrics_client, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_log_enricher, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")

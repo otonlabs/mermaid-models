@@ -1,0 +1,47 @@
+C4Context
+    title Payments com Splitter-Aggregator [Azure]
+
+    Enterprise_Boundary(b0, "Payments Platform") {
+        Person(Pagador, "Pagador", "Pessoa que efetua pagamento")
+        Person(Recebedor, "Recebedor", "Beneficiario do pagamento")
+        System(Payments_Gateway, "Payments Gateway", "Gateway principal para processamento de pagamentos", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Splitter_Aggregator_Engine, "Splitter-Aggregator Engine", "Motor de splitter-aggregator para processamento", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Payments_Monitor, "Payments Monitor", "Monitoramento e alertas de processamento de pagamentos", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        SystemQueue(msg_queue, "Service Bus Queue Queue", "Canal de mensagens para splitter-aggregator", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/Service-Bus.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(Rede_Adquirente, "Rede Adquirente", "Processadora de cartoes")
+    System_Ext(PIX_SPI, "PIX SPI", "Sistema PIX do BACEN")
+    System_Ext(TED_DOC_CIP, "TED DOC CIP", "Transferencias interbancarias")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "Azure Monitor", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Pagador, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Payments_Gateway, "Roteia request autenticado", "HTTPS")
+    Rel(Payments_Gateway, msg_queue, "Envia mensagens", "Service Bus Queue")
+    Rel(msg_queue, Splitter_Aggregator_Engine, "Entrega para processamento", "Async")
+    Rel(Payments_Gateway, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Payments_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Payments_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Payments_Monitor, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Payments_Gateway, Rede_Adquirente, "Integra com", "HTTPS/mTLS")
+    Rel(Payments_Monitor, PIX_SPI, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Payments_Gateway, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Splitter_Aggregator_Engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Payments_Monitor, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")

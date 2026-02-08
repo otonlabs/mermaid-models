@@ -1,0 +1,47 @@
+C4Context
+    title Triagem de Notificacoes MED por Tipo [Oracle Cloud]
+
+    Enterprise_Boundary(b0, "PIX MED Platform") {
+        Person(Vitima, "Vitima", "Correntista vitima de fraude ou falha operacional")
+        Person(Analista_Fraude, "Analista Fraude", "Analisa casos MED e determina bloqueio")
+        System(MED_Classifier, "MED Classifier", "Classifica notificacao MED por tipo e urgencia", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        System(Fraud_MED_Processor, "Fraud MED Processor", "Processa MED tipo 1 com bloqueio cautelar imediato", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        System(Operational_MED_Processor, "Operational MED Processor", "Processa MED tipo 2 com analise de falha operacional", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        SystemQueue(msg_queue, "OCI Queue Queue", "Canal de mensagens para content-based-router", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Queue.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(BACEN_MED, "BACEN MED", "API MED do Banco Central para devolucoes especiais")
+    System_Ext(PSP_Recebedor, "PSP Recebedor", "PSP que recebeu o PIX objeto de devolucao")
+    System_Ext(Anti_Fraud_System, "Anti-Fraud System", "Sistema de deteccao de fraude")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "OCI Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Vitima, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, MED_Classifier, "Roteia request autenticado", "HTTPS")
+    Rel(MED_Classifier, msg_queue, "Envia mensagens", "OCI Queue")
+    Rel(msg_queue, Fraud_MED_Processor, "Entrega para processamento", "Async")
+    Rel(MED_Classifier, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(MED_Classifier, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(MED_Classifier, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Operational_MED_Processor, monitoring, "Reporta metricas", "HTTPS")
+    Rel(MED_Classifier, BACEN_MED, "Integra com", "HTTPS/mTLS")
+    Rel(Operational_MED_Processor, PSP_Recebedor, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(MED_Classifier, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Fraud_MED_Processor, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Operational_MED_Processor, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")

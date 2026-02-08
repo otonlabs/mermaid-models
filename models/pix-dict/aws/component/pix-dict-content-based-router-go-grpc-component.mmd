@@ -1,0 +1,43 @@
+C4Component
+    title PIX DICT - Content Based Router - Component View [AWS / Go / gRPC]
+
+    Container(api_layer, "PIX DICT API", "gRPC + REST Gateway", "Camada de API do dominio", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
+    ContainerDb(main_db, "Database", "Aurora PostgreSQL", "Banco de dados principal", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/Aurora.svg")
+    ContainerQueue(msg_queue, "Message Queue", "SQS", "Fila de mensagens", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
+
+    Container_Boundary(comp0, "PIX DICT Content Based Router") {
+        Component(Route_Controller, "Route Controller", "gRPC + REST Gateway", "Responsavel por route controller", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        Component(Content_Inspector, "Content Inspector", "Gin", "Responsavel por content inspector", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        Component(Route_Table, "Route Table", "sqlx + pgx", "Responsavel por route table", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        Component(Channel_Dispatcher, "Channel Dispatcher", "Watermill", "Responsavel por channel dispatcher", $sprite="img:https://icon.icepanel.io/AWS/svg/Compute/Lambda.svg")
+        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")
+        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")
+        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")
+        Component(dd_tracer, "DD Tracer", "dd-trace-go", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")
+        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")
+        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")
+    }
+
+    Rel(api_layer, ory_identity_handler, "Valida identity/session", "Internal")
+    Rel(ory_identity_handler, Route_Controller, "Autoriza e delega", "Internal")
+    Rel(Route_Controller, ory_permission_checker, "Verifica permissao", "Internal")
+    Rel(Route_Controller, opa_policy_evaluator, "Avalia policy de negocio", "Internal")
+    Rel(Route_Controller, Content_Inspector, "Delega para", "Internal")
+    Rel(Content_Inspector, Route_Table, "Delega para", "Internal")
+    Rel(Route_Table, Channel_Dispatcher, "Delega para", "Internal")
+    Rel(Channel_Dispatcher, main_db, "Lê/Escreve", "Aurora PostgreSQL")
+    Rel(Route_Controller, msg_queue, "Publica em", "SQS")
+    Rel(Route_Controller, dd_tracer, "Cria spans", "Internal")
+    Rel(Channel_Dispatcher, dd_metrics_client, "Emite metricas", "DogStatsD")
+    Rel(Route_Controller, dd_log_enricher, "Enriquece logs com trace context", "Internal")
+
+    UpdateElementStyle(Route_Controller, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Content_Inspector, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Route_Table, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Channel_Dispatcher, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_identity_handler, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_permission_checker, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(opa_policy_evaluator, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_tracer, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_metrics_client, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_log_enricher, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")

@@ -1,0 +1,45 @@
+C4Component
+    title PIX DICT - Circuit Breaker - Component View [AWS / Go / gRPC]
+
+    Container(api_layer, "PIX DICT API", "gRPC + REST Gateway", "Camada de API do dominio", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
+    ContainerDb(main_db, "Database", "Aurora PostgreSQL", "Banco de dados principal", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/Aurora.svg")
+    ContainerQueue(msg_queue, "Message Queue", "SQS", "Fila de mensagens", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
+    ContainerDb(pattern_store, "Pattern Store", "DynamoDB", "Estado do padrao", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/DynamoDB.svg")
+
+    Container_Boundary(comp0, "PIX DICT Circuit Breaker") {
+        Component(Circuit_Manager, "Circuit Manager", "Gin", "Responsavel por circuit manager", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        Component(Fallback_Handler, "Fallback Handler", "Gin", "Responsavel por fallback handler", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        Component(Health_Checker, "Health Checker", "Gin", "Responsavel por health checker", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        Component(Metrics_Recorder, "Metrics Recorder", "sqlx + pgx", "Responsavel por metrics recorder", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")
+        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")
+        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")
+        Component(dd_tracer, "DD Tracer", "dd-trace-go", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")
+        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")
+        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")
+    }
+
+    Rel(api_layer, ory_identity_handler, "Valida identity/session", "Internal")
+    Rel(ory_identity_handler, Circuit_Manager, "Autoriza e delega", "Internal")
+    Rel(Circuit_Manager, ory_permission_checker, "Verifica permissao", "Internal")
+    Rel(Circuit_Manager, opa_policy_evaluator, "Avalia policy de negocio", "Internal")
+    Rel(Circuit_Manager, Fallback_Handler, "Delega para", "Internal")
+    Rel(Fallback_Handler, Health_Checker, "Delega para", "Internal")
+    Rel(Health_Checker, Metrics_Recorder, "Delega para", "Internal")
+    Rel(Metrics_Recorder, main_db, "Lê/Escreve", "Aurora PostgreSQL")
+    Rel(Circuit_Manager, pattern_store, "Persiste estado", "DynamoDB")
+    Rel(Metrics_Recorder, msg_queue, "Emite eventos", "SQS")
+    Rel(Circuit_Manager, dd_tracer, "Cria spans", "Internal")
+    Rel(Metrics_Recorder, dd_metrics_client, "Emite metricas", "DogStatsD")
+    Rel(Circuit_Manager, dd_log_enricher, "Enriquece logs com trace context", "Internal")
+
+    UpdateElementStyle(Circuit_Manager, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Fallback_Handler, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Health_Checker, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Metrics_Recorder, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_identity_handler, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_permission_checker, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(opa_policy_evaluator, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_tracer, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_metrics_client, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_log_enricher, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")

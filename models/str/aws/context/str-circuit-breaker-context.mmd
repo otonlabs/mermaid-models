@@ -1,0 +1,47 @@
+C4Context
+    title STR com Circuit Breaker [AWS]
+
+    Enterprise_Boundary(b0, "STR Platform") {
+        Person(Operador_Tesouraria, "Operador Tesouraria", "Opera mesa de tesouraria")
+        Person(Gerente_Liquidez, "Gerente Liquidez", "Gerencia posicao de liquidez")
+        System(STR_Command_Service, "STR Command Service", "Servico de comandos para sistema de transferencia de reservas", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        System(Circuit_Breaker_Handler, "Circuit Breaker Handler", "Handler do padrao Circuit Breaker", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        System(STR_Query_Service, "STR Query Service", "Servico de consultas otimizadas", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        SystemDb(main_db, "Aurora PostgreSQL", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/Aurora.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(BACEN_STR, "BACEN STR", "Sistema de Transferencia de Reservas")
+    System_Ext(Banco_Participante, "Banco Participante", "Banco com conta reserva")
+    System_Ext(Camara_LBTR, "Camara LBTR", "Liquidacao bruta em tempo real")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Operador_Tesouraria, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, STR_Command_Service, "Roteia request autenticado", "HTTPS")
+    Rel(STR_Command_Service, Circuit_Breaker_Handler, "Coordena com", "gRPC/Internal")
+    Rel(Circuit_Breaker_Handler, main_db, "Persiste estado", "Aurora PostgreSQL")
+    Rel(STR_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(STR_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(STR_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(STR_Query_Service, monitoring, "Reporta metricas", "HTTPS")
+    Rel(STR_Command_Service, BACEN_STR, "Integra com", "HTTPS/mTLS")
+    Rel(STR_Query_Service, Banco_Participante, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(STR_Command_Service, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Circuit_Breaker_Handler, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(STR_Query_Service, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_db, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")

@@ -1,0 +1,47 @@
+C4Context
+    title Reconciliation com Publish-Subscribe [Azure]
+
+    Enterprise_Boundary(b0, "Reconciliation Platform") {
+        Person(Analista_Conciliacao, "Analista Conciliacao", "Analista de reconciliacao")
+        Person(Auditor, "Auditor", "Auditor financeiro")
+        System(Reconciliation_Gateway, "Reconciliation Gateway", "Gateway principal para reconciliacao financeira", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Publish_Subscribe_Engine, "Publish-Subscribe Engine", "Motor de publish-subscribe para processamento", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Reconciliation_Monitor, "Reconciliation Monitor", "Monitoramento e alertas de reconciliacao financeira", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        SystemQueue(msg_queue, "Service Bus Queue Queue", "Canal de mensagens para pub-sub", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/Service-Bus.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(Core_Banking, "Core Banking", "Sistema core de contas")
+    System_Ext(Payment_Processor, "Payment Processor", "Processador de pagamentos")
+    System_Ext(External_Statement, "External Statement", "Extratos de contrapartes")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "Azure Monitor", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Analista_Conciliacao, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Reconciliation_Gateway, "Roteia request autenticado", "HTTPS")
+    Rel(Reconciliation_Gateway, msg_queue, "Envia mensagens", "Service Bus Queue")
+    Rel(msg_queue, Publish_Subscribe_Engine, "Entrega para processamento", "Async")
+    Rel(Reconciliation_Gateway, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Reconciliation_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Reconciliation_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Reconciliation_Monitor, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Reconciliation_Gateway, Core_Banking, "Integra com", "HTTPS/mTLS")
+    Rel(Reconciliation_Monitor, Payment_Processor, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Reconciliation_Gateway, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Publish_Subscribe_Engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Reconciliation_Monitor, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")

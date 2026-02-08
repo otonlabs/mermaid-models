@@ -1,0 +1,47 @@
+C4Context
+    title Auditoria Completa do Fluxo MED via Wire Tap [Azure]
+
+    Enterprise_Boundary(b0, "PIX MED Platform") {
+        Person(Vitima, "Vitima", "Correntista vitima de fraude ou falha operacional")
+        Person(Analista_Fraude, "Analista Fraude", "Analisa casos MED e determina bloqueio")
+        System(MED_Flow_Gateway, "MED Flow Gateway", "Gateway central do fluxo MED", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Regulatory_Tap, "Regulatory Tap", "Captura evidencias de cada decisao para auditoria BACEN", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Evidence_Store, "Evidence Store", "Armazena evidencias com imutabilidade e timestamp", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        SystemQueue(msg_queue, "Service Bus Queue Queue", "Canal de mensagens para wire-tap", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/Service-Bus.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(BACEN_MED, "BACEN MED", "API MED do Banco Central para devolucoes especiais")
+    System_Ext(PSP_Recebedor, "PSP Recebedor", "PSP que recebeu o PIX objeto de devolucao")
+    System_Ext(Anti_Fraud_System, "Anti-Fraud System", "Sistema de deteccao de fraude")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "Azure Monitor", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Vitima, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, MED_Flow_Gateway, "Roteia request autenticado", "HTTPS")
+    Rel(MED_Flow_Gateway, msg_queue, "Envia mensagens", "Service Bus Queue")
+    Rel(msg_queue, Regulatory_Tap, "Entrega para processamento", "Async")
+    Rel(MED_Flow_Gateway, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(MED_Flow_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(MED_Flow_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Evidence_Store, monitoring, "Reporta metricas", "HTTPS")
+    Rel(MED_Flow_Gateway, BACEN_MED, "Integra com", "HTTPS/mTLS")
+    Rel(Evidence_Store, PSP_Recebedor, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(MED_Flow_Gateway, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Regulatory_Tap, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Evidence_Store, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")

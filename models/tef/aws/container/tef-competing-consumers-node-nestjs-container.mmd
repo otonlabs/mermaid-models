@@ -1,0 +1,68 @@
+C4Container
+    title TEF - Competing Consumers Container View [AWS / Node.js / NestJS]
+
+    Person(Lojista, "Lojista", "Estabelecimento comercial com POS")
+
+    Container_Boundary(cb0, "TEF Platform") {
+        Container(TEF_svc, "TEF Service", "NestJS", "Servico principal rodando em ECS Fargate", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        Container(competing_consumers_proc, "Competing Consumers Processor", "Bull + NestJS Microservices", "Multiplos consumidores competem para processar mensagens de fila compartilhada na camada de containers de transferencia eletronica de fundos", $sprite="img:https://icon.icepanel.io/AWS/svg/Compute/Lambda.svg")
+        ContainerQueue(main_q, "SQS Queue", "SQS", "Canal de mensagens principal", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
+        ContainerQueue(pattern_q, "Competing Consumers Channel", "SNS", "Canal do padrao EIP", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Notification-Service.svg")
+        ContainerDb(main_db, "Primary Database", "Aurora PostgreSQL", "Armazenamento principal do dominio", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/Aurora.svg")
+        ContainerDb(cache, "Cache Layer", "ElastiCache Redis", "Cache de consultas frequentes", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/ElastiCache.svg")
+    }
+
+    Container_Boundary(sec0, "Security Layer") {
+        Container(ory_oathkeeper, "Ory Oathkeeper", "Go", "Zero Trust proxy: authenticators, authorizers, mutators", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
+        Container(ory_kratos, "Ory Kratos", "Go", "Identity management: registration, login, MFA, sessions", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+        Container(ory_keto, "Ory Keto", "Go", "Permissions (Zanzibar): relation tuples, check/expand API", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
+        Container(opa_sidecar, "OPA Policy Engine", "OPA + Rego", "Policy as Code para authorization e compliance")
+        ContainerDb(identity_db, "Identity Store", "Aurora PostgreSQL", "Identidades, sessions, credentials")
+        ContainerDb(keto_db, "Keto Store", "Aurora PostgreSQL", "Relation tuples e namespaces")
+    }
+
+    Container_Boundary(obs0, "Observability Layer") {
+        Container(dd_agent, "Datadog Agent", "DaemonSet", "Coleta metricas, traces e logs de todos os containers", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
+        Container(dd_apm, "APM Tracer", "dd-trace-js", "Distributed tracing com auto-instrumentacao")
+        Container(dd_logs, "Log Forwarder", "Datadog Agent", "Coleta e envia logs para Datadog Log Management")
+    }
+
+    System_Ext(Rede_Adquirente, "Rede Adquirente", "Processadora de transacoes")
+    System_Ext(Bandeira, "Bandeira", "Visa, Mastercard, Elo")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(datadog_platform, "Datadog Platform", "SaaS: APM, Logs, Metrics, Dashboards, Alerts")
+
+    Rel(Lojista, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session", "HTTPS")
+    Rel(ory_oathkeeper, TEF_svc, "Roteia autenticado", "HTTPS")
+    Rel(TEF_svc, ory_keto, "Verifica permissao", "gRPC")
+    Rel(TEF_svc, opa_sidecar, "Avalia policy", "localhost:8181")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2", "HTTPS")
+    Rel(ory_kratos, identity_db, "Persiste identidades", "Aurora PostgreSQL")
+    Rel(ory_keto, keto_db, "Persiste relation tuples", "Aurora PostgreSQL")
+    Rel(TEF_svc, dd_apm, "Envia traces", "localhost:8126")
+    Rel(TEF_svc, dd_agent, "Envia metricas", "localhost:8125/DogStatsD")
+    Rel(dd_agent, datadog_platform, "Forwarda telemetria", "HTTPS")
+    Rel(dd_logs, datadog_platform, "Forwarda logs", "HTTPS")
+    Rel(TEF_svc, main_q, "Publica mensagens", "SQS")
+    Rel(main_q, competing_consumers_proc, "Consome e processa", "Async")
+    Rel(competing_consumers_proc, pattern_q, "Roteia para canal", "SNS")
+    Rel(competing_consumers_proc, main_db, "Persiste resultado", "Aurora PostgreSQL")
+    Rel(TEF_svc, cache, "Consulta cache", "ElastiCache Redis")
+    Rel(TEF_svc, Rede_Adquirente, "Integra com", "HTTPS/mTLS")
+
+    UpdateElementStyle(TEF_svc, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(competing_consumers_proc, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_q, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(pattern_q, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_db, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(cache, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(opa_sidecar, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(identity_db, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(keto_db, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_agent, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_apm, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_logs, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")

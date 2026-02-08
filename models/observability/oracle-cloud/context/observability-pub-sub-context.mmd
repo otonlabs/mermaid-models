@@ -1,0 +1,47 @@
+C4Context
+    title Observability com Publish-Subscribe [Oracle Cloud]
+
+    Enterprise_Boundary(b0, "Observability Platform") {
+        Person(SRE_Engineer, "SRE Engineer", "Engenheiro de confiabilidade")
+        Person(Developer, "Developer", "Desenvolvedor que monitora servicos")
+        System(Observability_Gateway, "Observability Gateway", "Gateway principal para observabilidade e monitoramento", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        System(Publish_Subscribe_Engine, "Publish-Subscribe Engine", "Motor de publish-subscribe para processamento", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        System(Observability_Monitor, "Observability Monitor", "Monitoramento e alertas de observabilidade e monitoramento", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        SystemQueue(msg_queue, "OCI Queue Queue", "Canal de mensagens para pub-sub", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Queue.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(Application_Services, "Application Services", "Servicos monitorados")
+    System_Ext(PagerDuty, "PagerDuty", "Plataforma de alertas")
+    System_Ext(Grafana_Cloud, "Grafana Cloud", "Plataforma de dashboards")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "OCI Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(SRE_Engineer, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Observability_Gateway, "Roteia request autenticado", "HTTPS")
+    Rel(Observability_Gateway, msg_queue, "Envia mensagens", "OCI Queue")
+    Rel(msg_queue, Publish_Subscribe_Engine, "Entrega para processamento", "Async")
+    Rel(Observability_Gateway, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Observability_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Observability_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Observability_Monitor, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Observability_Gateway, Application_Services, "Integra com", "HTTPS/mTLS")
+    Rel(Observability_Monitor, PagerDuty, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Observability_Gateway, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Publish_Subscribe_Engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Observability_Monitor, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")

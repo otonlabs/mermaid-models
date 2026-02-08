@@ -1,0 +1,68 @@
+C4Container
+    title Open Banking - Request-Reply Container View [Oracle Cloud / Python / FastAPI]
+
+    Person(Cliente, "Cliente", "Titular dos dados financeiros")
+
+    Container_Boundary(cb0, "Open Banking Platform") {
+        Container(Open_Banking_svc, "Open Banking Service", "FastAPI", "Servico principal rodando em OKE", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        Container(request_reply_proc, "Request Reply Processor", "Celery + Kombu", "Envia requisicao e aguarda resposta correlacionada na camada de containers de open finance brasil", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Functions.svg")
+        ContainerQueue(main_q, "OCI Queue Queue", "OCI Queue", "Canal de mensagens principal", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Queue.svg")
+        ContainerQueue(pattern_q, "Request Reply Channel", "OCI Events", "Canal do padrao EIP", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Events.svg")
+        ContainerDb(main_db, "Primary Database", "Autonomous Database", "Armazenamento principal do dominio", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/Autonomous-Database.svg")
+        ContainerDb(cache, "Cache Layer", "OCI Cache Redis", "Cache de consultas frequentes", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Cache.svg")
+    }
+
+    Container_Boundary(sec0, "Security Layer") {
+        Container(ory_oathkeeper, "Ory Oathkeeper", "Go", "Zero Trust proxy: authenticators, authorizers, mutators", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
+        Container(ory_kratos, "Ory Kratos", "Go", "Identity management: registration, login, MFA, sessions", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
+        Container(ory_keto, "Ory Keto", "Go", "Permissions (Zanzibar): relation tuples, check/expand API", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+        Container(opa_sidecar, "OPA Policy Engine", "OPA + Rego", "Policy as Code para authorization e compliance")
+        ContainerDb(identity_db, "Identity Store", "Autonomous Database", "Identidades, sessions, credentials")
+        ContainerDb(keto_db, "Keto Store", "Autonomous Database", "Relation tuples e namespaces")
+    }
+
+    Container_Boundary(obs0, "Observability Layer") {
+        Container(dd_agent, "Datadog Agent", "DaemonSet", "Coleta metricas, traces e logs de todos os containers", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
+        Container(dd_apm, "APM Tracer", "dd-trace-py", "Distributed tracing com auto-instrumentacao")
+        Container(dd_logs, "Log Forwarder", "Datadog Agent", "Coleta e envia logs para Datadog Log Management")
+    }
+
+    System_Ext(Open_Finance_Directory, "Open Finance Directory", "Diretorio de participantes")
+    System_Ext(Instituicao_Receptora, "Instituicao Receptora", "ITP que recebe dados")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(datadog_platform, "Datadog Platform", "SaaS: APM, Logs, Metrics, Dashboards, Alerts")
+
+    Rel(Cliente, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session", "HTTPS")
+    Rel(ory_oathkeeper, Open_Banking_svc, "Roteia autenticado", "HTTPS")
+    Rel(Open_Banking_svc, ory_keto, "Verifica permissao", "gRPC")
+    Rel(Open_Banking_svc, opa_sidecar, "Avalia policy", "localhost:8181")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2", "HTTPS")
+    Rel(ory_kratos, identity_db, "Persiste identidades", "Autonomous Database")
+    Rel(ory_keto, keto_db, "Persiste relation tuples", "Autonomous Database")
+    Rel(Open_Banking_svc, dd_apm, "Envia traces", "localhost:8126")
+    Rel(Open_Banking_svc, dd_agent, "Envia metricas", "localhost:8125/DogStatsD")
+    Rel(dd_agent, datadog_platform, "Forwarda telemetria", "HTTPS")
+    Rel(dd_logs, datadog_platform, "Forwarda logs", "HTTPS")
+    Rel(Open_Banking_svc, main_q, "Publica mensagens", "OCI Queue")
+    Rel(main_q, request_reply_proc, "Consome e processa", "Async")
+    Rel(request_reply_proc, pattern_q, "Roteia para canal", "OCI Events")
+    Rel(request_reply_proc, main_db, "Persiste resultado", "Autonomous Database")
+    Rel(Open_Banking_svc, cache, "Consulta cache", "OCI Cache Redis")
+    Rel(Open_Banking_svc, Open_Finance_Directory, "Integra com", "HTTPS/mTLS")
+
+    UpdateElementStyle(Open_Banking_svc, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(request_reply_proc, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(main_q, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(pattern_q, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(cache, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(opa_sidecar, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(identity_db, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(keto_db, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_agent, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_apm, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_logs, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")

@@ -1,0 +1,68 @@
+C4Container
+    title Pipeline de Validacao de Pagamento PIX [Oracle Cloud / Go / gRPC]
+
+    Person(Pagador, "Pagador", "Correntista que inicia transferencia PIX")
+
+    Container_Boundary(cb0, "PIX SPI Platform") {
+        Container(PIX_SPI_svc, "PIX SPI Service", "Gin", "Servico principal rodando em OKE", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        Container(pipes_filters_proc, "Pipes Filters Processor", "Watermill", "Filters: schema validation, AML screening, limit check, balance check, fraud check", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Functions.svg")
+        ContainerQueue(main_q, "OCI Queue Queue", "OCI Queue", "Canal de mensagens principal", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Queue.svg")
+        ContainerQueue(pattern_q, "Pipes Filters Channel", "OCI Events", "Canal do padrao EIP", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Events.svg")
+        ContainerDb(main_db, "Primary Database", "Autonomous Database", "Armazenamento principal do dominio", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/Autonomous-Database.svg")
+        ContainerDb(cache, "Cache Layer", "OCI Cache Redis", "Cache de consultas frequentes", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Cache.svg")
+    }
+
+    Container_Boundary(sec0, "Security Layer") {
+        Container(ory_oathkeeper, "Ory Oathkeeper", "Go", "Zero Trust proxy: authenticators, authorizers, mutators", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
+        Container(ory_kratos, "Ory Kratos", "Go", "Identity management: registration, login, MFA, sessions", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
+        Container(ory_keto, "Ory Keto", "Go", "Permissions (Zanzibar): relation tuples, check/expand API", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+        Container(opa_sidecar, "OPA Policy Engine", "OPA + Rego", "Policy as Code para authorization e compliance")
+        ContainerDb(identity_db, "Identity Store", "Autonomous Database", "Identidades, sessions, credentials")
+        ContainerDb(keto_db, "Keto Store", "Autonomous Database", "Relation tuples e namespaces")
+    }
+
+    Container_Boundary(obs0, "Observability Layer") {
+        Container(dd_agent, "Datadog Agent", "DaemonSet", "Coleta metricas, traces e logs de todos os containers", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
+        Container(dd_apm, "APM Tracer", "dd-trace-go", "Distributed tracing com auto-instrumentacao")
+        Container(dd_logs, "Log Forwarder", "Datadog Agent", "Coleta e envia logs para Datadog Log Management")
+    }
+
+    System_Ext(BACEN_SPI, "BACEN SPI", "Sistema de Pagamentos Instantaneos do Banco Central")
+    System_Ext(Participante_Direto, "Participante Direto", "Instituicao com conta PI no BACEN")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(datadog_platform, "Datadog Platform", "SaaS: APM, Logs, Metrics, Dashboards, Alerts")
+
+    Rel(Pagador, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session", "HTTPS")
+    Rel(ory_oathkeeper, PIX_SPI_svc, "Roteia autenticado", "HTTPS")
+    Rel(PIX_SPI_svc, ory_keto, "Verifica permissao", "gRPC")
+    Rel(PIX_SPI_svc, opa_sidecar, "Avalia policy", "localhost:8181")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2", "HTTPS")
+    Rel(ory_kratos, identity_db, "Persiste identidades", "Autonomous Database")
+    Rel(ory_keto, keto_db, "Persiste relation tuples", "Autonomous Database")
+    Rel(PIX_SPI_svc, dd_apm, "Envia traces", "localhost:8126")
+    Rel(PIX_SPI_svc, dd_agent, "Envia metricas", "localhost:8125/DogStatsD")
+    Rel(dd_agent, datadog_platform, "Forwarda telemetria", "HTTPS")
+    Rel(dd_logs, datadog_platform, "Forwarda logs", "HTTPS")
+    Rel(PIX_SPI_svc, main_q, "Publica mensagens", "OCI Queue")
+    Rel(main_q, pipes_filters_proc, "Consome e processa", "Async")
+    Rel(pipes_filters_proc, pattern_q, "Roteia para canal", "OCI Events")
+    Rel(pipes_filters_proc, main_db, "Persiste resultado", "Autonomous Database")
+    Rel(PIX_SPI_svc, cache, "Consulta cache", "OCI Cache Redis")
+    Rel(PIX_SPI_svc, BACEN_SPI, "Integra com", "HTTPS/mTLS")
+
+    UpdateElementStyle(PIX_SPI_svc, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(pipes_filters_proc, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(main_q, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(pattern_q, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(cache, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(opa_sidecar, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(identity_db, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(keto_db, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_agent, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_apm, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_logs, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")

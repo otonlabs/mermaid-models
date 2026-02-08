@@ -1,0 +1,43 @@
+C4Component
+    title TEF - Dead Letter - Component View [GCP / Node.js / NestJS]
+
+    Container(api_layer, "TEF API", "NestJS REST", "Camada de API do dominio", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
+    ContainerDb(main_db, "Database", "Cloud SQL", "Banco de dados principal", $sprite="img:https://icon.icepanel.io/GCP/svg/Databases/Cloud-SQL.svg")
+    ContainerQueue(msg_queue, "Message Queue", "Cloud Tasks", "Fila de mensagens", $sprite="img:https://icon.icepanel.io/GCP/svg/App-Integration/Cloud-Tasks.svg")
+
+    Container_Boundary(comp0, "TEF Dead Letter") {
+        Component(DLQ_Consumer, "DLQ Consumer", "Bull + NestJS Microservices", "Responsavel por dlq consumer", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Functions.svg")
+        Component(Retry_Scheduler, "Retry Scheduler", "NestJS", "Responsavel por retry scheduler", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+        Component(Poison_Detector, "Poison Detector", "NestJS", "Responsavel por poison detector", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+        Component(Alert_Notifier, "Alert Notifier", "Bull + NestJS Microservices", "Responsavel por alert notifier", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Functions.svg")
+        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")
+        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")
+        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")
+        Component(dd_tracer, "DD Tracer", "dd-trace-js", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")
+        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")
+        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")
+    }
+
+    Rel(api_layer, ory_identity_handler, "Valida identity/session", "Internal")
+    Rel(ory_identity_handler, DLQ_Consumer, "Autoriza e delega", "Internal")
+    Rel(DLQ_Consumer, ory_permission_checker, "Verifica permissao", "Internal")
+    Rel(DLQ_Consumer, opa_policy_evaluator, "Avalia policy de negocio", "Internal")
+    Rel(DLQ_Consumer, Retry_Scheduler, "Delega para", "Internal")
+    Rel(Retry_Scheduler, Poison_Detector, "Delega para", "Internal")
+    Rel(Poison_Detector, Alert_Notifier, "Delega para", "Internal")
+    Rel(Alert_Notifier, main_db, "Lê/Escreve", "Cloud SQL")
+    Rel(DLQ_Consumer, msg_queue, "Publica em", "Cloud Tasks")
+    Rel(DLQ_Consumer, dd_tracer, "Cria spans", "Internal")
+    Rel(Alert_Notifier, dd_metrics_client, "Emite metricas", "DogStatsD")
+    Rel(DLQ_Consumer, dd_log_enricher, "Enriquece logs com trace context", "Internal")
+
+    UpdateElementStyle(DLQ_Consumer, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(Retry_Scheduler, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(Poison_Detector, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(Alert_Notifier, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_identity_handler, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_permission_checker, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(opa_policy_evaluator, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(dd_tracer, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(dd_metrics_client, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(dd_log_enricher, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")

@@ -1,0 +1,47 @@
+C4Context
+    title Insurance com Circuit Breaker [AWS]
+
+    Enterprise_Boundary(b0, "Insurance Platform") {
+        Person(Segurado, "Segurado", "Cliente segurado")
+        Person(Corretor, "Corretor", "Corretor de seguros")
+        System(Insurance_Command_Service, "Insurance Command Service", "Servico de comandos para plataforma de seguros", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        System(Circuit_Breaker_Handler, "Circuit Breaker Handler", "Handler do padrao Circuit Breaker", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        System(Insurance_Query_Service, "Insurance Query Service", "Servico de consultas otimizadas", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        SystemDb(main_db, "Aurora PostgreSQL", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/Aurora.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(SUSEP, "SUSEP", "Superintendencia de Seguros Privados")
+    System_Ext(Ressegurador, "Ressegurador", "Empresa de resseguro")
+    System_Ext(Bureau_Sinistro, "Bureau Sinistro", "Base de dados de sinistros")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Segurado, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Insurance_Command_Service, "Roteia request autenticado", "HTTPS")
+    Rel(Insurance_Command_Service, Circuit_Breaker_Handler, "Coordena com", "gRPC/Internal")
+    Rel(Circuit_Breaker_Handler, main_db, "Persiste estado", "Aurora PostgreSQL")
+    Rel(Insurance_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Insurance_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Insurance_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Insurance_Query_Service, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Insurance_Command_Service, SUSEP, "Integra com", "HTTPS/mTLS")
+    Rel(Insurance_Query_Service, Ressegurador, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Insurance_Command_Service, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Circuit_Breaker_Handler, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Insurance_Query_Service, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_db, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")

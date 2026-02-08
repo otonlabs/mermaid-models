@@ -1,0 +1,68 @@
+C4Container
+    title Sidecar para Comunicacao MED Segura [Azure / Python / FastAPI]
+
+    Person(Vitima, "Vitima", "Correntista vitima de fraude ou falha operacional")
+
+    Container_Boundary(cb0, "PIX MED Platform") {
+        Container(PIX_MED_svc, "PIX MED Service", "FastAPI", "Servico principal rodando em App Service", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        Container(sidecar_handler, "Sidecar Handler", "FastAPI + Uvicorn", "Sidecar com mTLS, assinatura digital e validacao de certificado ICP-Brasil", $sprite="img:https://icon.icepanel.io/Azure/svg/Containers/Kubernetes-Services.svg")
+        ContainerQueue(event_q, "Domain Events", "Service Bus Queue", "Canal de eventos do dominio", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/Service-Bus.svg")
+        ContainerDb(main_db, "Primary Database", "Azure SQL Database", "Armazenamento principal do dominio", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/SQL-Database.svg")
+        ContainerDb(cache, "Cache Layer", "Azure Cache for Redis", "Cache de consultas frequentes", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/Cache-Redis.svg")
+        ContainerDb(pattern_db, "Pattern State Store", "Cosmos DB", "Estado do padrao sidecar", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/Azure-Cosmos-DB.svg")
+    }
+
+    Container_Boundary(sec0, "Security Layer") {
+        Container(ory_oathkeeper, "Ory Oathkeeper", "Go", "Zero Trust proxy: authenticators, authorizers, mutators", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
+        Container(ory_kratos, "Ory Kratos", "Go", "Identity management: registration, login, MFA, sessions", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+        Container(ory_keto, "Ory Keto", "Go", "Permissions (Zanzibar): relation tuples, check/expand API", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
+        Container(opa_sidecar, "OPA Policy Engine", "OPA + Rego", "Policy as Code para authorization e compliance")
+        ContainerDb(identity_db, "Identity Store", "Azure SQL Database", "Identidades, sessions, credentials")
+        ContainerDb(keto_db, "Keto Store", "Azure SQL Database", "Relation tuples e namespaces")
+    }
+
+    Container_Boundary(obs0, "Observability Layer") {
+        Container(dd_agent, "Datadog Agent", "DaemonSet", "Coleta metricas, traces e logs de todos os containers", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
+        Container(dd_apm, "APM Tracer", "dd-trace-py", "Distributed tracing com auto-instrumentacao")
+        Container(dd_logs, "Log Forwarder", "Datadog Agent", "Coleta e envia logs para Datadog Log Management")
+    }
+
+    System_Ext(BACEN_MED, "BACEN MED", "API MED do Banco Central para devolucoes especiais")
+    System_Ext(PSP_Recebedor, "PSP Recebedor", "PSP que recebeu o PIX objeto de devolucao")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(datadog_platform, "Datadog Platform", "SaaS: APM, Logs, Metrics, Dashboards, Alerts")
+
+    Rel(Vitima, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session", "HTTPS")
+    Rel(ory_oathkeeper, PIX_MED_svc, "Roteia autenticado", "HTTPS")
+    Rel(PIX_MED_svc, ory_keto, "Verifica permissao", "gRPC")
+    Rel(PIX_MED_svc, opa_sidecar, "Avalia policy", "localhost:8181")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2", "HTTPS")
+    Rel(ory_kratos, identity_db, "Persiste identidades", "Azure SQL Database")
+    Rel(ory_keto, keto_db, "Persiste relation tuples", "Azure SQL Database")
+    Rel(PIX_MED_svc, dd_apm, "Envia traces", "localhost:8126")
+    Rel(PIX_MED_svc, dd_agent, "Envia metricas", "localhost:8125/DogStatsD")
+    Rel(dd_agent, datadog_platform, "Forwarda telemetria", "HTTPS")
+    Rel(dd_logs, datadog_platform, "Forwarda logs", "HTTPS")
+    Rel(PIX_MED_svc, sidecar_handler, "Delega para padrao", "FastAPI + Uvicorn")
+    Rel(sidecar_handler, event_q, "Emite eventos", "Service Bus Queue")
+    Rel(PIX_MED_svc, main_db, "Persiste dados", "Azure SQL Database")
+    Rel(sidecar_handler, pattern_db, "Armazena estado", "Cosmos DB")
+    Rel(PIX_MED_svc, cache, "Consulta cache", "Azure Cache for Redis")
+    Rel(PIX_MED_svc, BACEN_MED, "Integra com", "HTTPS/mTLS")
+
+    UpdateElementStyle(PIX_MED_svc, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(sidecar_handler, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(event_q, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(cache, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(pattern_db, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(opa_sidecar, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(identity_db, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(keto_db, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_agent, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_apm, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_logs, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")

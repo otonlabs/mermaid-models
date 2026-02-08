@@ -1,0 +1,44 @@
+# MED com Event Sourcing para Rastreabilidade [AWS]
+
+## Domínio
+PIX MED — Mecanismo Especial de Devolucao
+
+## Cloud Provider
+AWS
+
+## Nível C4
+Context
+
+## Padrão Utilizado
+- **Tipo:** Design Pattern
+- **Padrão:** CQRS + Event Sourcing
+
+## Descrição
+Historico completo e imutavel de cada caso MED para auditoria BACEN
+
+## Componentes Principais
+- **MED Command Service** — Processa comandos de abertura, analise e devolucao
+- **MED Event Store** — Historico imutavel de eventos do caso MED
+- **MED Query View** — Consulta de status e historico de casos MED
+- **Aurora PostgreSQL** — persistência principal do domínio
+
+## Camada de Segurança
+- **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)
+- **Ory Kratos** — Identity management (registration, login, MFA, session)
+- **Ory Keto** — Permission system Google Zanzibar (relation tuples, check/expand API)
+- **Ory Hydra** — OAuth 2.0 & OpenID Connect Server (FAPI, consent, JWT)
+- **OPA Policy Engine** — Policy as Code com Rego (authorization, compliance, business rules)
+
+## Camada de Observabilidade
+- **Datadog Agent** — DaemonSet/Sidecar coletando metricas, traces e logs (portas 8125/8126)
+- **Datadog APM** — Distributed tracing via dd-trace com auto-instrumentacao
+- **Datadog Log Management** — Coleta e correlacao de logs com trace_id/span_id
+- **Datadog Dashboards** — Dashboards e alertas customizados com SLOs
+
+## Integrações Externas
+- **BACEN MED** — API MED do Banco Central para devolucoes especiais
+- **PSP Recebedor** — PSP que recebeu o PIX objeto de devolucao
+- **Anti-Fraud System** — Sistema de deteccao de fraude
+
+## Diagrama
+[MED com Event Sourcing para Rastreabilidade (AWS)](./pix-med-cqrs-es-context.mmd)

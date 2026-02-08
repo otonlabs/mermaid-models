@@ -1,0 +1,47 @@
+C4Context
+    title Core Banking com Publish-Subscribe [AWS]
+
+    Enterprise_Boundary(b0, "Core Banking Platform") {
+        Person(Correntista, "Correntista", "Cliente com conta corrente")
+        Person(Gerente_Conta, "Gerente Conta", "Gerente de relacionamento")
+        System(Core_Banking_Gateway, "Core Banking Gateway", "Gateway principal para plataforma core banking", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        System(Publish_Subscribe_Engine, "Publish-Subscribe Engine", "Motor de publish-subscribe para processamento", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        System(Core_Banking_Monitor, "Core Banking Monitor", "Monitoramento e alertas de plataforma core banking", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        SystemQueue(msg_queue, "SQS Queue", "Canal de mensagens para pub-sub", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(CIP, "CIP", "Camara Interbancaria de Pagamentos")
+    System_Ext(BACEN, "BACEN", "Banco Central do Brasil")
+    System_Ext(Bureau_Credito, "Bureau Credito", "Serasa, SPC, Boa Vista")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Correntista, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Core_Banking_Gateway, "Roteia request autenticado", "HTTPS")
+    Rel(Core_Banking_Gateway, msg_queue, "Envia mensagens", "SQS")
+    Rel(msg_queue, Publish_Subscribe_Engine, "Entrega para processamento", "Async")
+    Rel(Core_Banking_Gateway, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Core_Banking_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Core_Banking_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Core_Banking_Monitor, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Core_Banking_Gateway, CIP, "Integra com", "HTTPS/mTLS")
+    Rel(Core_Banking_Monitor, BACEN, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Core_Banking_Gateway, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Publish_Subscribe_Engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Core_Banking_Monitor, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(msg_queue, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")

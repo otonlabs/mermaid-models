@@ -1,0 +1,47 @@
+C4Context
+    title Investments com Content-Based Router [Azure]
+
+    Enterprise_Boundary(b0, "Investments Platform") {
+        Person(Investidor, "Investidor", "Cliente investidor")
+        Person(Assessor, "Assessor", "Assessor de investimentos")
+        System(Investments_Gateway, "Investments Gateway", "Gateway principal para investimentos e patrimonio", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Content_Based_Router_Engine, "Content-Based Router Engine", "Motor de content-based router para processamento", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Investments_Monitor, "Investments Monitor", "Monitoramento e alertas de investimentos e patrimonio", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        SystemQueue(msg_queue, "Service Bus Queue Queue", "Canal de mensagens para content-based-router", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/Service-Bus.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(B3_Bolsa, "B3 Bolsa", "Bolsa de Valores do Brasil")
+    System_Ext(CVM, "CVM", "Comissao de Valores Mobiliarios")
+    System_Ext(Custodiante, "Custodiante", "Custodia de ativos")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "Azure Monitor", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Investidor, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Investments_Gateway, "Roteia request autenticado", "HTTPS")
+    Rel(Investments_Gateway, msg_queue, "Envia mensagens", "Service Bus Queue")
+    Rel(msg_queue, Content_Based_Router_Engine, "Entrega para processamento", "Async")
+    Rel(Investments_Gateway, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Investments_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Investments_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Investments_Monitor, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Investments_Gateway, B3_Bolsa, "Integra com", "HTTPS/mTLS")
+    Rel(Investments_Monitor, CVM, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Investments_Gateway, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Content_Based_Router_Engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Investments_Monitor, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")

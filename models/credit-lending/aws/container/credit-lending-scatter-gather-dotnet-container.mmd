@@ -1,0 +1,68 @@
+C4Container
+    title Credit Lending - Scatter-Gather Container View [AWS / .NET 8 / ASP.NET Core]
+
+    Person(Solicitante, "Solicitante", "Pessoa solicitando credito")
+
+    Container_Boundary(cb0, "Credit Lending Platform") {
+        Container(Credit_Lending_svc, "Credit Lending Service", "ASP.NET Core", "Servico principal rodando em ECS Fargate", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        Container(scatter_gather_proc, "Scatter Gather Processor", "MassTransit", "Distribui requisicao para multiplos destinatarios e agrega respostas na camada de containers de credito e emprestimos", $sprite="img:https://icon.icepanel.io/AWS/svg/Compute/Lambda.svg")
+        ContainerQueue(main_q, "SQS Queue", "SQS", "Canal de mensagens principal", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
+        ContainerQueue(pattern_q, "Scatter Gather Channel", "SNS", "Canal do padrao EIP", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Notification-Service.svg")
+        ContainerDb(main_db, "Primary Database", "Aurora PostgreSQL", "Armazenamento principal do dominio", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/Aurora.svg")
+        ContainerDb(cache, "Cache Layer", "ElastiCache Redis", "Cache de consultas frequentes", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/ElastiCache.svg")
+    }
+
+    Container_Boundary(sec0, "Security Layer") {
+        Container(ory_oathkeeper, "Ory Oathkeeper", "Go", "Zero Trust proxy: authenticators, authorizers, mutators", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
+        Container(ory_kratos, "Ory Kratos", "Go", "Identity management: registration, login, MFA, sessions", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+        Container(ory_keto, "Ory Keto", "Go", "Permissions (Zanzibar): relation tuples, check/expand API", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
+        Container(opa_sidecar, "OPA Policy Engine", "OPA + Rego", "Policy as Code para authorization e compliance")
+        ContainerDb(identity_db, "Identity Store", "Aurora PostgreSQL", "Identidades, sessions, credentials")
+        ContainerDb(keto_db, "Keto Store", "Aurora PostgreSQL", "Relation tuples e namespaces")
+    }
+
+    Container_Boundary(obs0, "Observability Layer") {
+        Container(dd_agent, "Datadog Agent", "DaemonSet", "Coleta metricas, traces e logs de todos os containers", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
+        Container(dd_apm, "APM Tracer", "dd-trace-dotnet", "Distributed tracing com auto-instrumentacao")
+        Container(dd_logs, "Log Forwarder", "Datadog Agent", "Coleta e envia logs para Datadog Log Management")
+    }
+
+    System_Ext(Bureau_Credito_SCR, "Bureau Credito SCR", "Sistema de informacoes de credito BACEN")
+    System_Ext(BACEN_SCR, "BACEN SCR", "Central de risco do BACEN")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(datadog_platform, "Datadog Platform", "SaaS: APM, Logs, Metrics, Dashboards, Alerts")
+
+    Rel(Solicitante, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session", "HTTPS")
+    Rel(ory_oathkeeper, Credit_Lending_svc, "Roteia autenticado", "HTTPS")
+    Rel(Credit_Lending_svc, ory_keto, "Verifica permissao", "gRPC")
+    Rel(Credit_Lending_svc, opa_sidecar, "Avalia policy", "localhost:8181")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2", "HTTPS")
+    Rel(ory_kratos, identity_db, "Persiste identidades", "Aurora PostgreSQL")
+    Rel(ory_keto, keto_db, "Persiste relation tuples", "Aurora PostgreSQL")
+    Rel(Credit_Lending_svc, dd_apm, "Envia traces", "localhost:8126")
+    Rel(Credit_Lending_svc, dd_agent, "Envia metricas", "localhost:8125/DogStatsD")
+    Rel(dd_agent, datadog_platform, "Forwarda telemetria", "HTTPS")
+    Rel(dd_logs, datadog_platform, "Forwarda logs", "HTTPS")
+    Rel(Credit_Lending_svc, main_q, "Publica mensagens", "SQS")
+    Rel(main_q, scatter_gather_proc, "Consome e processa", "Async")
+    Rel(scatter_gather_proc, pattern_q, "Roteia para canal", "SNS")
+    Rel(scatter_gather_proc, main_db, "Persiste resultado", "Aurora PostgreSQL")
+    Rel(Credit_Lending_svc, cache, "Consulta cache", "ElastiCache Redis")
+    Rel(Credit_Lending_svc, Bureau_Credito_SCR, "Integra com", "HTTPS/mTLS")
+
+    UpdateElementStyle(Credit_Lending_svc, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(scatter_gather_proc, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_q, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(pattern_q, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_db, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(cache, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(opa_sidecar, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(identity_db, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(keto_db, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_agent, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_apm, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(dd_logs, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")

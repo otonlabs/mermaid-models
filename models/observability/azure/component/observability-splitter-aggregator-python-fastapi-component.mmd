@@ -1,0 +1,43 @@
+C4Component
+    title Observability - Splitter Aggregator - Component View [Azure / Python / FastAPI]
+
+    Container(api_layer, "Observability API", "FastAPI + Uvicorn", "Camada de API do dominio", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
+    ContainerDb(main_db, "Database", "Azure SQL Database", "Banco de dados principal", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/SQL-Database.svg")
+    ContainerQueue(msg_queue, "Message Queue", "Service Bus Queue", "Fila de mensagens", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/Service-Bus.svg")
+
+    Container_Boundary(comp0, "Observability Splitter Aggregator") {
+        Component(Message_Splitter, "Message Splitter", "FastAPI", "Responsavel por message splitter", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        Component(Correlation_Manager, "Correlation Manager", "SQLAlchemy", "Responsavel por correlation manager", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        Component(Parallel_Processor, "Parallel Processor", "Celery + Kombu", "Responsavel por parallel processor", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/Function-Apps.svg")
+        Component(Result_Aggregator, "Result Aggregator", "FastAPI", "Responsavel por result aggregator", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")
+        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")
+        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")
+        Component(dd_tracer, "DD Tracer", "dd-trace-py", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")
+        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")
+        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")
+    }
+
+    Rel(api_layer, ory_identity_handler, "Valida identity/session", "Internal")
+    Rel(ory_identity_handler, Message_Splitter, "Autoriza e delega", "Internal")
+    Rel(Message_Splitter, ory_permission_checker, "Verifica permissao", "Internal")
+    Rel(Message_Splitter, opa_policy_evaluator, "Avalia policy de negocio", "Internal")
+    Rel(Message_Splitter, Correlation_Manager, "Delega para", "Internal")
+    Rel(Correlation_Manager, Parallel_Processor, "Delega para", "Internal")
+    Rel(Parallel_Processor, Result_Aggregator, "Delega para", "Internal")
+    Rel(Result_Aggregator, main_db, "Lê/Escreve", "Azure SQL Database")
+    Rel(Message_Splitter, msg_queue, "Publica em", "Service Bus Queue")
+    Rel(Message_Splitter, dd_tracer, "Cria spans", "Internal")
+    Rel(Result_Aggregator, dd_metrics_client, "Emite metricas", "DogStatsD")
+    Rel(Message_Splitter, dd_log_enricher, "Enriquece logs com trace context", "Internal")
+
+    UpdateElementStyle(Message_Splitter, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Correlation_Manager, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Parallel_Processor, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Result_Aggregator, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_identity_handler, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_permission_checker, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(opa_policy_evaluator, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_tracer, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_metrics_client, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_log_enricher, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")

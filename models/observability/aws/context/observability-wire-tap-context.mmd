@@ -1,0 +1,47 @@
+C4Context
+    title Observability com Wire Tap [AWS]
+
+    Enterprise_Boundary(b0, "Observability Platform") {
+        Person(SRE_Engineer, "SRE Engineer", "Engenheiro de confiabilidade")
+        Person(Developer, "Developer", "Desenvolvedor que monitora servicos")
+        System(Observability_Gateway, "Observability Gateway", "Gateway principal para observabilidade e monitoramento", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        System(Wire_Tap_Engine, "Wire Tap Engine", "Motor de wire tap para processamento", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        System(Observability_Monitor, "Observability Monitor", "Monitoramento e alertas de observabilidade e monitoramento", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+        SystemQueue(msg_queue, "SQS Queue", "Canal de mensagens para wire-tap", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(Application_Services, "Application Services", "Servicos monitorados")
+    System_Ext(PagerDuty, "PagerDuty", "Plataforma de alertas")
+    System_Ext(Grafana_Cloud, "Grafana Cloud", "Plataforma de dashboards")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(SRE_Engineer, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Observability_Gateway, "Roteia request autenticado", "HTTPS")
+    Rel(Observability_Gateway, msg_queue, "Envia mensagens", "SQS")
+    Rel(msg_queue, Wire_Tap_Engine, "Entrega para processamento", "Async")
+    Rel(Observability_Gateway, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Observability_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Observability_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Observability_Monitor, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Observability_Gateway, Application_Services, "Integra com", "HTTPS/mTLS")
+    Rel(Observability_Monitor, PagerDuty, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Observability_Gateway, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Wire_Tap_Engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(Observability_Monitor, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(msg_queue, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")

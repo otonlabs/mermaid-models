@@ -1,0 +1,47 @@
+C4Context
+    title API Gateway com Circuit Breaker [GCP]
+
+    Enterprise_Boundary(b0, "API Gateway Platform") {
+        Person(API_Consumer, "API Consumer", "Consumidor de APIs")
+        Person(API_Developer, "API Developer", "Desenvolvedor de APIs")
+        System(API_Gateway_Command_Service, "API Gateway Command Service", "Servico de comandos para api gateway e hub de integracao", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+        System(Circuit_Breaker_Handler, "Circuit Breaker Handler", "Handler do padrao Circuit Breaker", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+        System(API_Gateway_Query_Service, "API Gateway Query Service", "Servico de consultas otimizadas", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+        SystemDb(main_db, "Cloud SQL", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/GCP/svg/Databases/Cloud-SQL.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Secret-Manager.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(External_Partner, "External Partner", "Parceiro externo consumidor")
+    System_Ext(Internal_Microservice, "Internal Microservice", "Microservico interno")
+    System_Ext(Identity_Provider, "Identity Provider", "Provedor de identidade")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "Cloud Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(API_Consumer, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, API_Gateway_Command_Service, "Roteia request autenticado", "HTTPS")
+    Rel(API_Gateway_Command_Service, Circuit_Breaker_Handler, "Coordena com", "gRPC/Internal")
+    Rel(Circuit_Breaker_Handler, main_db, "Persiste estado", "Cloud SQL")
+    Rel(API_Gateway_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(API_Gateway_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(API_Gateway_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(API_Gateway_Query_Service, monitoring, "Reporta metricas", "HTTPS")
+    Rel(API_Gateway_Command_Service, External_Partner, "Integra com", "HTTPS/mTLS")
+    Rel(API_Gateway_Query_Service, Internal_Microservice, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(API_Gateway_Command_Service, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(Circuit_Breaker_Handler, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(API_Gateway_Query_Service, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")

@@ -1,0 +1,47 @@
+C4Context
+    title Observability com Strangler Fig [Azure]
+
+    Enterprise_Boundary(b0, "Observability Platform") {
+        Person(SRE_Engineer, "SRE Engineer", "Engenheiro de confiabilidade")
+        Person(Developer, "Developer", "Desenvolvedor que monitora servicos")
+        System(Observability_Command_Service, "Observability Command Service", "Servico de comandos para observabilidade e monitoramento", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Strangler_Fig_Handler, "Strangler Fig Handler", "Handler do padrao Strangler Fig", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Observability_Query_Service, "Observability Query Service", "Servico de consultas otimizadas", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        SystemDb(main_db, "Azure SQL Database", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/SQL-Database.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(Application_Services, "Application Services", "Servicos monitorados")
+    System_Ext(PagerDuty, "PagerDuty", "Plataforma de alertas")
+    System_Ext(Grafana_Cloud, "Grafana Cloud", "Plataforma de dashboards")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "Azure Monitor", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(SRE_Engineer, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Observability_Command_Service, "Roteia request autenticado", "HTTPS")
+    Rel(Observability_Command_Service, Strangler_Fig_Handler, "Coordena com", "gRPC/Internal")
+    Rel(Strangler_Fig_Handler, main_db, "Persiste estado", "Azure SQL Database")
+    Rel(Observability_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Observability_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Observability_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Observability_Query_Service, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Observability_Command_Service, Application_Services, "Integra com", "HTTPS/mTLS")
+    Rel(Observability_Query_Service, PagerDuty, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Observability_Command_Service, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Strangler_Fig_Handler, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Observability_Query_Service, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")

@@ -1,0 +1,47 @@
+C4Context
+    title MED Choreography entre PSPs [Oracle Cloud]
+
+    Enterprise_Boundary(b0, "PIX MED Platform") {
+        Person(Vitima, "Vitima", "Correntista vitima de fraude ou falha operacional")
+        Person(Analista_Fraude, "Analista Fraude", "Analisa casos MED e determina bloqueio")
+        System(Payer_PSP_Events, "Payer PSP Events", "Publica abertura de caso MED pelo PSP pagador", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        System(Receiver_PSP_Events, "Receiver PSP Events", "Consome notificacao e publica bloqueio cautelar", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        System(BACEN_MED_Relay, "BACEN MED Relay", "Sincroniza estado do caso com API MED BACEN", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        SystemDb(main_db, "Autonomous Database", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/Autonomous-Database.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(BACEN_MED, "BACEN MED", "API MED do Banco Central para devolucoes especiais")
+    System_Ext(PSP_Recebedor, "PSP Recebedor", "PSP que recebeu o PIX objeto de devolucao")
+    System_Ext(Anti_Fraud_System, "Anti-Fraud System", "Sistema de deteccao de fraude")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "OCI Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Vitima, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Payer_PSP_Events, "Roteia request autenticado", "HTTPS")
+    Rel(Payer_PSP_Events, Receiver_PSP_Events, "Coordena com", "gRPC/Internal")
+    Rel(Receiver_PSP_Events, main_db, "Persiste estado", "Autonomous Database")
+    Rel(Payer_PSP_Events, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Payer_PSP_Events, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Payer_PSP_Events, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(BACEN_MED_Relay, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Payer_PSP_Events, BACEN_MED, "Integra com", "HTTPS/mTLS")
+    Rel(BACEN_MED_Relay, PSP_Recebedor, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Payer_PSP_Events, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Receiver_PSP_Events, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(BACEN_MED_Relay, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")

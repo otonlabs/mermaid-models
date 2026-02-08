@@ -1,0 +1,45 @@
+C4Component
+    title Reconciliation - Saga Orchestration - Component View [Oracle Cloud / Node.js / NestJS]
+
+    Container(api_layer, "Reconciliation API", "NestJS REST", "Camada de API do dominio", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
+    ContainerDb(main_db, "Database", "Autonomous Database", "Banco de dados principal", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/Autonomous-Database.svg")
+    ContainerQueue(msg_queue, "Message Queue", "OCI Queue", "Fila de mensagens", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Queue.svg")
+    ContainerDb(pattern_store, "Pattern Store", "OCI NoSQL", "Estado do padrao", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/NoSQL-Database.svg")
+
+    Container_Boundary(comp0, "Reconciliation Saga Orchestration") {
+        Component(Saga_Controller, "Saga Controller", "NestJS REST", "Responsavel por saga controller", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        Component(Step_Executor, "Step Executor", "NestJS", "Responsavel por step executor", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        Component(State_Machine, "State Machine", "NestJS", "Responsavel por state machine", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        Component(Compensation_Handler, "Compensation Handler", "NestJS", "Responsavel por compensation handler", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")
+        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")
+        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")
+        Component(dd_tracer, "DD Tracer", "dd-trace-js", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")
+        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")
+        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")
+    }
+
+    Rel(api_layer, ory_identity_handler, "Valida identity/session", "Internal")
+    Rel(ory_identity_handler, Saga_Controller, "Autoriza e delega", "Internal")
+    Rel(Saga_Controller, ory_permission_checker, "Verifica permissao", "Internal")
+    Rel(Saga_Controller, opa_policy_evaluator, "Avalia policy de negocio", "Internal")
+    Rel(Saga_Controller, Step_Executor, "Delega para", "Internal")
+    Rel(Step_Executor, State_Machine, "Delega para", "Internal")
+    Rel(State_Machine, Compensation_Handler, "Delega para", "Internal")
+    Rel(Compensation_Handler, main_db, "Lê/Escreve", "Autonomous Database")
+    Rel(Saga_Controller, pattern_store, "Persiste estado", "OCI NoSQL")
+    Rel(Compensation_Handler, msg_queue, "Emite eventos", "OCI Queue")
+    Rel(Saga_Controller, dd_tracer, "Cria spans", "Internal")
+    Rel(Compensation_Handler, dd_metrics_client, "Emite metricas", "DogStatsD")
+    Rel(Saga_Controller, dd_log_enricher, "Enriquece logs com trace context", "Internal")
+
+    UpdateElementStyle(Saga_Controller, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Step_Executor, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(State_Machine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Compensation_Handler, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_identity_handler, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_permission_checker, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(opa_policy_evaluator, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_tracer, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_metrics_client, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_log_enricher, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")

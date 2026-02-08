@@ -1,0 +1,47 @@
+C4Context
+    title DDA com Dead Letter Channel [Oracle Cloud]
+
+    Enterprise_Boundary(b0, "DDA Platform") {
+        Person(Sacado, "Sacado", "Pagador do boleto")
+        Person(Cedente, "Cedente", "Emitente do boleto")
+        System(DDA_Gateway, "DDA Gateway", "Gateway principal para debito direto autorizado", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        System(Dead_Letter_Channel_Engine, "Dead Letter Channel Engine", "Motor de dead letter channel para processamento", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        System(DDA_Monitor, "DDA Monitor", "Monitoramento e alertas de debito direto autorizado", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        SystemQueue(msg_queue, "OCI Queue Queue", "Canal de mensagens para dead-letter", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Queue.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(CIP_DDA, "CIP DDA", "Central de registro DDA")
+    System_Ext(Banco_Sacado, "Banco Sacado", "Banco do pagador")
+    System_Ext(Registro_Boletos, "Registro Boletos", "Sistema de registro de boletos")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "OCI Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Sacado, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, DDA_Gateway, "Roteia request autenticado", "HTTPS")
+    Rel(DDA_Gateway, msg_queue, "Envia mensagens", "OCI Queue")
+    Rel(msg_queue, Dead_Letter_Channel_Engine, "Entrega para processamento", "Async")
+    Rel(DDA_Gateway, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(DDA_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(DDA_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(DDA_Monitor, monitoring, "Reporta metricas", "HTTPS")
+    Rel(DDA_Gateway, CIP_DDA, "Integra com", "HTTPS/mTLS")
+    Rel(DDA_Monitor, Banco_Sacado, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(DDA_Gateway, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Dead_Letter_Channel_Engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(DDA_Monitor, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")

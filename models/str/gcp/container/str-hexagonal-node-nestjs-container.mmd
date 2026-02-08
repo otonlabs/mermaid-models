@@ -1,0 +1,68 @@
+C4Container
+    title STR - Hexagonal Architecture Container View [GCP / Node.js / NestJS]
+
+    Person(Operador_Tesouraria, "Operador Tesouraria", "Opera mesa de tesouraria")
+
+    Container_Boundary(cb0, "STR Platform") {
+        Container(STR_svc, "STR Service", "NestJS", "Servico principal rodando em Cloud Run", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+        Container(hexagonal_handler, "Hexagonal Handler", "NestJS REST", "Ports and Adapters para isolamento de dominio nos containers de sistema de transferencia de reservas", $sprite="img:https://icon.icepanel.io/GCP/svg/Containers/Google-Kubernetes-Engine.svg")
+        ContainerQueue(event_q, "Domain Events", "Cloud Tasks", "Canal de eventos do dominio", $sprite="img:https://icon.icepanel.io/GCP/svg/App-Integration/Cloud-Tasks.svg")
+        ContainerDb(main_db, "Primary Database", "Cloud SQL", "Armazenamento principal do dominio", $sprite="img:https://icon.icepanel.io/GCP/svg/Databases/Cloud-SQL.svg")
+        ContainerDb(cache, "Cache Layer", "Memorystore Redis", "Cache de consultas frequentes", $sprite="img:https://icon.icepanel.io/GCP/svg/Databases/Memorystore.svg")
+        ContainerDb(pattern_db, "Pattern State Store", "Firestore", "Estado do padrao hexagonal", $sprite="img:https://icon.icepanel.io/GCP/svg/Databases/Firestore.svg")
+    }
+
+    Container_Boundary(sec0, "Security Layer") {
+        Container(ory_oathkeeper, "Ory Oathkeeper", "Go", "Zero Trust proxy: authenticators, authorizers, mutators", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
+        Container(ory_kratos, "Ory Kratos", "Go", "Identity management: registration, login, MFA, sessions", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+        Container(ory_keto, "Ory Keto", "Go", "Permissions (Zanzibar): relation tuples, check/expand API", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Secret-Manager.svg")
+        Container(opa_sidecar, "OPA Policy Engine", "OPA + Rego", "Policy as Code para authorization e compliance")
+        ContainerDb(identity_db, "Identity Store", "Cloud SQL", "Identidades, sessions, credentials")
+        ContainerDb(keto_db, "Keto Store", "Cloud SQL", "Relation tuples e namespaces")
+    }
+
+    Container_Boundary(obs0, "Observability Layer") {
+        Container(dd_agent, "Datadog Agent", "DaemonSet", "Coleta metricas, traces e logs de todos os containers", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
+        Container(dd_apm, "APM Tracer", "dd-trace-js", "Distributed tracing com auto-instrumentacao")
+        Container(dd_logs, "Log Forwarder", "Datadog Agent", "Coleta e envia logs para Datadog Log Management")
+    }
+
+    System_Ext(BACEN_STR, "BACEN STR", "Sistema de Transferencia de Reservas")
+    System_Ext(Banco_Participante, "Banco Participante", "Banco com conta reserva")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(datadog_platform, "Datadog Platform", "SaaS: APM, Logs, Metrics, Dashboards, Alerts")
+
+    Rel(Operador_Tesouraria, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session", "HTTPS")
+    Rel(ory_oathkeeper, STR_svc, "Roteia autenticado", "HTTPS")
+    Rel(STR_svc, ory_keto, "Verifica permissao", "gRPC")
+    Rel(STR_svc, opa_sidecar, "Avalia policy", "localhost:8181")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2", "HTTPS")
+    Rel(ory_kratos, identity_db, "Persiste identidades", "Cloud SQL")
+    Rel(ory_keto, keto_db, "Persiste relation tuples", "Cloud SQL")
+    Rel(STR_svc, dd_apm, "Envia traces", "localhost:8126")
+    Rel(STR_svc, dd_agent, "Envia metricas", "localhost:8125/DogStatsD")
+    Rel(dd_agent, datadog_platform, "Forwarda telemetria", "HTTPS")
+    Rel(dd_logs, datadog_platform, "Forwarda logs", "HTTPS")
+    Rel(STR_svc, hexagonal_handler, "Delega para padrao", "NestJS REST")
+    Rel(hexagonal_handler, event_q, "Emite eventos", "Cloud Tasks")
+    Rel(STR_svc, main_db, "Persiste dados", "Cloud SQL")
+    Rel(hexagonal_handler, pattern_db, "Armazena estado", "Firestore")
+    Rel(STR_svc, cache, "Consulta cache", "Memorystore Redis")
+    Rel(STR_svc, BACEN_STR, "Integra com", "HTTPS/mTLS")
+
+    UpdateElementStyle(STR_svc, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(hexagonal_handler, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(event_q, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(cache, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(pattern_db, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(opa_sidecar, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(identity_db, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(keto_db, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(dd_agent, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(dd_apm, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(dd_logs, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")

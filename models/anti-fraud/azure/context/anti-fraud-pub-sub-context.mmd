@@ -1,0 +1,47 @@
+C4Context
+    title Anti-Fraud com Publish-Subscribe [Azure]
+
+    Enterprise_Boundary(b0, "Anti-Fraud Platform") {
+        Person(Analista_Fraude, "Analista Fraude", "Investiga alertas de fraude")
+        Person(Data_Scientist, "Data Scientist", "Treina modelos de deteccao")
+        System(Anti_Fraud_Gateway, "Anti-Fraud Gateway", "Gateway principal para motor anti-fraude e risco", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Publish_Subscribe_Engine, "Publish-Subscribe Engine", "Motor de publish-subscribe para processamento", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        System(Anti_Fraud_Monitor, "Anti-Fraud Monitor", "Monitoramento e alertas de motor anti-fraude e risco", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        SystemQueue(msg_queue, "Service Bus Queue Queue", "Canal de mensagens para pub-sub", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/Service-Bus.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(Bureau_de_Fraude, "Bureau de Fraude", "Base de dados de fraudadores")
+    System_Ext(Device_Fingerprint, "Device Fingerprint", "Servico de device ID")
+    System_Ext(BACEN_MED, "BACEN MED", "Mecanismo Especial de Devolucao")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "Azure Monitor", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Analista_Fraude, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Anti_Fraud_Gateway, "Roteia request autenticado", "HTTPS")
+    Rel(Anti_Fraud_Gateway, msg_queue, "Envia mensagens", "Service Bus Queue")
+    Rel(msg_queue, Publish_Subscribe_Engine, "Entrega para processamento", "Async")
+    Rel(Anti_Fraud_Gateway, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Anti_Fraud_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Anti_Fraud_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Anti_Fraud_Monitor, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Anti_Fraud_Gateway, Bureau_de_Fraude, "Integra com", "HTTPS/mTLS")
+    Rel(Anti_Fraud_Monitor, Device_Fingerprint, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Anti_Fraud_Gateway, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Publish_Subscribe_Engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Anti_Fraud_Monitor, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")

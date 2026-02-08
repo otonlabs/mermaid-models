@@ -1,0 +1,47 @@
+C4Context
+    title KYC AML com CQRS + Event Sourcing [Oracle Cloud]
+
+    Enterprise_Boundary(b0, "KYC AML Platform") {
+        Person(Cliente, "Cliente", "Pessoa em processo de onboarding")
+        Person(Analista_Compliance, "Analista Compliance", "Analista de PLD/FT")
+        System(KYC_AML_Command_Service, "KYC AML Command Service", "Servico de comandos para know your customer e anti-lavagem", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        System(CQRS___Event_Sourcing_Handler, "CQRS + Event Sourcing Handler", "Handler do padrao CQRS + Event Sourcing", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        System(KYC_AML_Query_Service, "KYC AML Query Service", "Servico de consultas otimizadas", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        SystemDb(main_db, "Autonomous Database", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/Autonomous-Database.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(Receita_Federal, "Receita Federal", "Validacao de CPF/CNPJ")
+    System_Ext(COAF, "COAF", "Conselho de Controle de Atividades Financeiras")
+    System_Ext(OFAC_Sanctions, "OFAC Sanctions", "Lista de sancoes internacionais")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "OCI Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Cliente, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, KYC_AML_Command_Service, "Roteia request autenticado", "HTTPS")
+    Rel(KYC_AML_Command_Service, CQRS___Event_Sourcing_Handler, "Coordena com", "gRPC/Internal")
+    Rel(CQRS___Event_Sourcing_Handler, main_db, "Persiste estado", "Autonomous Database")
+    Rel(KYC_AML_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(KYC_AML_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(KYC_AML_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(KYC_AML_Query_Service, monitoring, "Reporta metricas", "HTTPS")
+    Rel(KYC_AML_Command_Service, Receita_Federal, "Integra com", "HTTPS/mTLS")
+    Rel(KYC_AML_Query_Service, COAF, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(KYC_AML_Command_Service, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(CQRS___Event_Sourcing_Handler, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(KYC_AML_Query_Service, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")

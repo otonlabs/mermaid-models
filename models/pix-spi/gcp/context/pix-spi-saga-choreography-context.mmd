@@ -1,0 +1,47 @@
+C4Context
+    title PIX com Saga Choreography entre Participantes [GCP]
+
+    Enterprise_Boundary(b0, "PIX SPI Platform") {
+        Person(Pagador, "Pagador", "Correntista que inicia transferencia PIX")
+        Person(Recebedor, "Recebedor", "Beneficiario do pagamento PIX")
+        System(Payer_PSP_Publisher, "Payer PSP Publisher", "Publica evento de debito confirmado", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+        System(SPI_Relay_Consumer, "SPI Relay Consumer", "Consome debito e publica para PSP recebedor", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+        System(Receiver_PSP_Consumer, "Receiver PSP Consumer", "Consome e credita conta do recebedor", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+        SystemDb(main_db, "Cloud SQL", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/GCP/svg/Databases/Cloud-SQL.svg")
+    }
+
+    Enterprise_Boundary(sec0, "Security Layer") {
+        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
+        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Secret-Manager.svg")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+    }
+
+    System_Ext(BACEN_SPI, "BACEN SPI", "Sistema de Pagamentos Instantaneos do Banco Central")
+    System_Ext(Participante_Direto, "Participante Direto", "Instituicao com conta PI no BACEN")
+    System_Ext(STR, "STR", "Sistema de Transferencia de Reservas")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(monitoring, "Cloud Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+
+    Rel(Pagador, ory_oathkeeper, "Acessa via proxy", "HTTPS")
+    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
+    Rel(ory_oathkeeper, Payer_PSP_Publisher, "Roteia request autenticado", "HTTPS")
+    Rel(Payer_PSP_Publisher, SPI_Relay_Consumer, "Coordena com", "gRPC/Internal")
+    Rel(SPI_Relay_Consumer, main_db, "Persiste estado", "Cloud SQL")
+    Rel(Payer_PSP_Publisher, ory_keto, "Verifica permissao", "HTTPS")
+    Rel(Payer_PSP_Publisher, opa_engine, "Avalia policy de negocio", "HTTPS")
+    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
+    Rel(Payer_PSP_Publisher, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
+    Rel(Receiver_PSP_Consumer, monitoring, "Reporta metricas", "HTTPS")
+    Rel(Payer_PSP_Publisher, BACEN_SPI, "Integra com", "HTTPS/mTLS")
+    Rel(Receiver_PSP_Consumer, Participante_Direto, "Reporta para", "HTTPS")
+
+    UpdateElementStyle(Payer_PSP_Publisher, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(SPI_Relay_Consumer, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(Receiver_PSP_Consumer, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")

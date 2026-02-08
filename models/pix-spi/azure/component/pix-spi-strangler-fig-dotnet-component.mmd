@@ -1,0 +1,45 @@
+C4Component
+    title PIX SPI - Strangler Fig - Component View [Azure / .NET 8 / ASP.NET Core]
+
+    Container(api_layer, "PIX SPI API", "Minimal APIs", "Camada de API do dominio", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
+    ContainerDb(main_db, "Database", "Azure SQL Database", "Banco de dados principal", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/SQL-Database.svg")
+    ContainerQueue(msg_queue, "Message Queue", "Service Bus Queue", "Fila de mensagens", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/Service-Bus.svg")
+    ContainerDb(pattern_store, "Pattern Store", "Cosmos DB", "Estado do padrao", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/Azure-Cosmos-DB.svg")
+
+    Container_Boundary(comp0, "PIX SPI Strangler Fig") {
+        Component(Traffic_Router, "Traffic Router", "Minimal APIs", "Responsavel por traffic router", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        Component(Legacy_Adapter, "Legacy Adapter", "ASP.NET Core", "Responsavel por legacy adapter", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        Component(Feature_Toggle, "Feature Toggle", "EF Core", "Responsavel por feature toggle", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        Component(Migration_Tracker, "Migration Tracker", "EF Core", "Responsavel por migration tracker", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")
+        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")
+        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")
+        Component(dd_tracer, "DD Tracer", "dd-trace-dotnet", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")
+        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")
+        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")
+    }
+
+    Rel(api_layer, ory_identity_handler, "Valida identity/session", "Internal")
+    Rel(ory_identity_handler, Traffic_Router, "Autoriza e delega", "Internal")
+    Rel(Traffic_Router, ory_permission_checker, "Verifica permissao", "Internal")
+    Rel(Traffic_Router, opa_policy_evaluator, "Avalia policy de negocio", "Internal")
+    Rel(Traffic_Router, Legacy_Adapter, "Delega para", "Internal")
+    Rel(Legacy_Adapter, Feature_Toggle, "Delega para", "Internal")
+    Rel(Feature_Toggle, Migration_Tracker, "Delega para", "Internal")
+    Rel(Migration_Tracker, main_db, "Lê/Escreve", "Azure SQL Database")
+    Rel(Traffic_Router, pattern_store, "Persiste estado", "Cosmos DB")
+    Rel(Migration_Tracker, msg_queue, "Emite eventos", "Service Bus Queue")
+    Rel(Traffic_Router, dd_tracer, "Cria spans", "Internal")
+    Rel(Migration_Tracker, dd_metrics_client, "Emite metricas", "DogStatsD")
+    Rel(Traffic_Router, dd_log_enricher, "Enriquece logs com trace context", "Internal")
+
+    UpdateElementStyle(Traffic_Router, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Legacy_Adapter, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Feature_Toggle, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(Migration_Tracker, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_identity_handler, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_permission_checker, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(opa_policy_evaluator, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_tracer, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_metrics_client, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(dd_log_enricher, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")

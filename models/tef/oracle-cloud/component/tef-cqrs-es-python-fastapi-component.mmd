@@ -1,0 +1,45 @@
+C4Component
+    title TEF - Cqrs Es - Component View [Oracle Cloud / Python / FastAPI]
+
+    Container(api_layer, "TEF API", "FastAPI + Uvicorn", "Camada de API do dominio", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
+    ContainerDb(main_db, "Database", "Autonomous Database", "Banco de dados principal", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/Autonomous-Database.svg")
+    ContainerQueue(msg_queue, "Message Queue", "OCI Queue", "Fila de mensagens", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Queue.svg")
+    ContainerDb(pattern_store, "Pattern Store", "OCI NoSQL", "Estado do padrao", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/NoSQL-Database.svg")
+
+    Container_Boundary(comp0, "TEF Cqrs Es") {
+        Component(Command_Handler, "Command Handler", "FastAPI + Uvicorn", "Responsavel por command handler", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        Component(Event_Writer, "Event Writer", "SQLAlchemy", "Responsavel por event writer", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        Component(Projection_Builder, "Projection Builder", "FastAPI", "Responsavel por projection builder", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        Component(Snapshot_Manager, "Snapshot Manager", "SQLAlchemy", "Responsavel por snapshot manager", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")
+        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")
+        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")
+        Component(dd_tracer, "DD Tracer", "dd-trace-py", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")
+        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")
+        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")
+    }
+
+    Rel(api_layer, ory_identity_handler, "Valida identity/session", "Internal")
+    Rel(ory_identity_handler, Command_Handler, "Autoriza e delega", "Internal")
+    Rel(Command_Handler, ory_permission_checker, "Verifica permissao", "Internal")
+    Rel(Command_Handler, opa_policy_evaluator, "Avalia policy de negocio", "Internal")
+    Rel(Command_Handler, Event_Writer, "Delega para", "Internal")
+    Rel(Event_Writer, Projection_Builder, "Delega para", "Internal")
+    Rel(Projection_Builder, Snapshot_Manager, "Delega para", "Internal")
+    Rel(Snapshot_Manager, main_db, "Lê/Escreve", "Autonomous Database")
+    Rel(Command_Handler, pattern_store, "Persiste estado", "OCI NoSQL")
+    Rel(Snapshot_Manager, msg_queue, "Emite eventos", "OCI Queue")
+    Rel(Command_Handler, dd_tracer, "Cria spans", "Internal")
+    Rel(Snapshot_Manager, dd_metrics_client, "Emite metricas", "DogStatsD")
+    Rel(Command_Handler, dd_log_enricher, "Enriquece logs com trace context", "Internal")
+
+    UpdateElementStyle(Command_Handler, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Event_Writer, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Projection_Builder, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(Snapshot_Manager, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_identity_handler, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_permission_checker, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(opa_policy_evaluator, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_tracer, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_metrics_client, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(dd_log_enricher, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
