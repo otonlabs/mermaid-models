@@ -1,0 +1,13 @@
+{
+"mcpServers": {
+    "context7": {
+        "type": "http",
+        "url": "https://mcp.context7.com/mcp",
+        "apikey": "ctx7sk-2900f86f-0186-4860-b20e-9a3fd7387cd2"
+    },
+    "git": {
+        "command": "uvx",
+        "args": ["mcp-server-git", "--repository", "/Users/thiago/Documents/projects/mermaid-models"]
+    }
+}
+}
