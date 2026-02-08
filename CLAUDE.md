@@ -789,10 +789,92 @@ Script que usa `npx @mermaid-js/mermaid-cli` para validar a sintaxe dos arquivos
 
 4. **Corrigir** quaisquer erros de validação
 
+## Requisito: Layout Manhattan (ELK Orthogonal Routing)
+
+**Todos os diagramas `.mmd` devem usar o layout ELK com roteamento ortogonal (Manhattan)** para garantir que as linhas de conexão (edges) usem apenas segmentos horizontais e verticais, evitando sobreposição de linhas e melhorando a legibilidade dos diagramas.
+
+### Por que Manhattan Routing?
+
+Em diagramas C4 complexos com muitos componentes, boundaries e conexões, o layout padrão (dagre) pode gerar:
+- **Linhas sobrepostas** — edges cruzando uns sobre os outros
+- **Linhas diagonais** — difíceis de seguir visualmente
+- **Rótulos sobrepostos** — labels de relacionamentos se sobrepondo
+
+O layout **ELK (Eclipse Layout Kernel)** com `mergeEdges: true` e `nodePlacementStrategy: LINEAR_SEGMENTS` resolve esses problemas usando roteamento ortogonal (apenas linhas horizontais e verticais, como ruas de Manhattan).
+
+### Configuração YAML Frontmatter
+
+Todo arquivo `.mmd` deve incluir um **bloco YAML frontmatter** antes da declaração C4:
+
+```yaml
+---
+config:
+  layout: elk
+  elk:
+    mergeEdges: true
+    nodePlacementStrategy: LINEAR_SEGMENTS
+---
+C4Context
+    title ...
+```
+
+### Opções de Configuração ELK
+
+| Opção | Valor | Descrição |
+|-------|-------|-----------|
+| `layout` | `elk` | Ativa o Eclipse Layout Kernel em vez do dagre padrão |
+| `elk.mergeEdges` | `true` | Mescla edges paralelos entre os mesmos nós, reduzindo visual clutter |
+| `elk.nodePlacementStrategy` | `LINEAR_SEGMENTS` | Alinha nós em segmentos lineares para layout mais organizado |
+
+### Exemplo Completo com ELK
+
+```mermaid
+---
+config:
+  layout: elk
+  elk:
+    mergeEdges: true
+    nodePlacementStrategy: LINEAR_SEGMENTS
+---
+C4Container
+    title PIX SPI - Saga Orchestration [AWS / Java 21 / Spring Boot 3]
+
+    Person(pagador, "Pagador", "Correntista que inicia PIX")
+
+    Container_Boundary(cb0, "PIX SPI Platform") {
+        Container(spi_gw, "SPI Gateway", "Spring Boot 3", "Recebe mensagens PIX", $sprite="img:...")
+        Container(saga, "Saga Orchestrator", "Spring Cloud Stream", "Coordena steps", $sprite="img:...")
+        ContainerDb(tx_store, "Transaction Store", "Aurora", "Pagamentos", $sprite="img:...")
+    }
+
+    Rel(pagador, spi_gw, "Inicia PIX", "HTTPS")
+    Rel(spi_gw, saga, "Inicia saga", "gRPC")
+    Rel(saga, tx_store, "Persiste", "JDBC")
+
+    UpdateElementStyle(spi_gw, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+```
+
+### Regras
+1. **Todo arquivo `.mmd` deve iniciar com o bloco YAML frontmatter** contendo a configuração ELK
+2. O bloco YAML deve estar **antes** da declaração `C4Context`, `C4Container` ou `C4Component`
+3. O frontmatter usa delimitadores `---` (início e fim)
+4. As 3 propriedades (`layout`, `mergeEdges`, `nodePlacementStrategy`) são **obrigatórias**
+5. **Não** usar o layout dagre padrão — sempre usar ELK para consistência visual
+
+### Nota sobre Compatibilidade
+O layout ELK requer Mermaid 9.4+ e o plugin `mermaid-layout-elk`. Em ambientes que não suportam ELK, o frontmatter é ignorado graciosamente e o layout dagre padrão é usado como fallback.
+
 ## Sintaxe C4 Mermaid Confirmada (via Context7)
 
 ### C4Context
 ```
+---
+config:
+  layout: elk
+  elk:
+    mergeEdges: true
+    nodePlacementStrategy: LINEAR_SEGMENTS
+---
 C4Context
   title ...
   Enterprise_Boundary(id, "label") {
@@ -812,6 +894,13 @@ C4Context
 
 ### C4Container
 ```
+---
+config:
+  layout: elk
+  elk:
+    mergeEdges: true
+    nodePlacementStrategy: LINEAR_SEGMENTS
+---
 C4Container
   title ...
   Person(id, "name", "desc")
@@ -828,6 +917,13 @@ C4Container
 
 ### C4Component
 ```
+---
+config:
+  layout: elk
+  elk:
+    mergeEdges: true
+    nodePlacementStrategy: LINEAR_SEGMENTS
+---
 C4Component
   title ...
   Container(id, "name", "tech", "desc", $sprite="img:url")
@@ -858,3 +954,5 @@ C4Component
     - Comando de verificação: `grep -rl '!\[.*\](.*\.mmd)' models/ --include="*.md" | wc -l` (deve ser **0**)
 14. Confirmar presença do **Datadog** nos diagramas: `grep -rl 'Datadog\|DD Tracer\|DogStatsD\|APM Tracer\|Datadog Agent\|dd-trace' models/ --include="*.mmd" | wc -l` (deve ser > 0 em todos os domínios)
 15. Confirmar presença da **Observability Layer** ou componentes Datadog em todos os níveis C4
+16. Confirmar presença do **bloco YAML frontmatter ELK** em todos os `.mmd`: `grep -rl 'layout: elk' models/ --include="*.mmd" | wc -l` (deve ser igual ao total de `.mmd`)
+17. Confirmar que o frontmatter contém `mergeEdges: true` e `nodePlacementStrategy: LINEAR_SEGMENTS`

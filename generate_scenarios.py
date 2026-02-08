@@ -423,6 +423,16 @@ for dk, (lbl, desc, persons, ext_sys) in _REMAINING_DOMAINS.items():
 # HELPERS
 # ═══════════════════════════════════════════════════════════════════
 
+# ELK Manhattan layout frontmatter (orthogonal edge routing)
+ELK_FRONTMATTER = """---
+config:
+  layout: elk
+  elk:
+    mergeEdges: true
+    nodePlacementStrategy: LINEAR_SEGMENTS
+---"""
+
+
 def sid(text):
     """Safe Mermaid identifier."""
     return re.sub(r'[^a-zA-Z0-9]', '_', text).strip('_')
@@ -537,7 +547,7 @@ def gen_doc(mmd_path, title, domain, cloud, c4_level, scenario, is_eip, stack=No
 
 def gen_context(domain_key, domain, cloud, scenario, is_eip):
     c = CLOUDS[cloud]
-    L = ["C4Context"]
+    L = [ELK_FRONTMATTER, "C4Context"]
     L.append(f'    title {scenario["title"]} [{c["label"]}]')
     L.append("")
 
@@ -618,7 +628,7 @@ def gen_context(domain_key, domain, cloud, scenario, is_eip):
 
 def gen_container(domain_key, domain, cloud, scenario, is_eip, stack):
     c = CLOUDS[cloud]
-    L = ["C4Container"]
+    L = [ELK_FRONTMATTER, "C4Container"]
     L.append(f'    title {scenario["title"]} [{c["label"]} / {stack["label"]}]')
     L.append("")
 
@@ -781,7 +791,7 @@ def gen_component(domain_key, domain, cloud, scenario, is_eip, stack, variation_
     pattern = scenario["pattern"]
     comp_template = _COMP_TEMPLATES.get(pattern, [("Controller", "api"), ("Service", "fw"), ("Repository", "data"), ("Client", "grpc")])
 
-    L = ["C4Component"]
+    L = [ELK_FRONTMATTER, "C4Component"]
     L.append(f'    title {domain["label"]} - {pattern.replace("-", " ").title()} - Component View [{c["label"]} / {stack["label"]}]')
     L.append("")
 
