@@ -492,8 +492,6 @@ def gen_doc(mmd_path, title, domain, cloud, c4_level, scenario, is_eip, stack=No
     L.append("## Componentes Principais")
     if c4_level == "Context":
         L.append(f"- **{domain['label']} Platform** — sistema principal ({scenario.get('focus', 'plataforma do dominio')[:80]})")
-        L.append(f"- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy")
-        L.append(f"- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance")
     elif c4_level == "Container":
         L.append(f"- **{domain['label']} Service** — serviço principal rodando em {cloud_svc(cloud, 'compute')[0]}")
         if is_eip:
@@ -513,21 +511,23 @@ def gen_doc(mmd_path, title, domain, cloud, c4_level, scenario, is_eip, stack=No
             L.append(f"- **{comp_name}** — responsável por {comp_name.lower()}")
     L.append("")
 
-    L.append("## Camada de Segurança")
-    L.append("- **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)")
-    L.append("- **Ory Kratos** — Identity management (registration, login, MFA, session)")
-    L.append("- **Ory Keto** — Permission system Google Zanzibar (relation tuples, check/expand API)")
-    L.append("- **Ory Hydra** — OAuth 2.0 & OpenID Connect Server (FAPI, consent, JWT)")
-    L.append("- **OPA Policy Engine** — Policy as Code com Rego (authorization, compliance, business rules)")
-    L.append("")
+    # Security and Observability sections only for Container and Component levels
+    if c4_level in ("Container", "Component"):
+        L.append("## Camada de Segurança")
+        L.append("- **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)")
+        L.append("- **Ory Kratos** — Identity management (registration, login, MFA, session)")
+        L.append("- **Ory Keto** — Permission system Google Zanzibar (relation tuples, check/expand API)")
+        L.append("- **Ory Hydra** — OAuth 2.0 & OpenID Connect Server (FAPI, consent, JWT)")
+        L.append("- **OPA Policy Engine** — Policy as Code com Rego (authorization, compliance, business rules)")
+        L.append("")
 
-    dd_lib = DD_TRACE_LIBS.get(stack["id"], "dd-trace") if stack else "dd-trace"
-    L.append("## Camada de Observabilidade")
-    L.append(f"- **Datadog Agent** — DaemonSet/Sidecar coletando metricas, traces e logs (portas 8125/8126)")
-    L.append(f"- **Datadog APM** — Distributed tracing via {dd_lib} com auto-instrumentacao")
-    L.append(f"- **Datadog Log Management** — Coleta e correlacao de logs com trace_id/span_id")
-    L.append(f"- **Datadog Dashboards** — Dashboards e alertas customizados com SLOs")
-    L.append("")
+        dd_lib = DD_TRACE_LIBS.get(stack["id"], "dd-trace") if stack else "dd-trace"
+        L.append("## Camada de Observabilidade")
+        L.append(f"- **Datadog Agent** — DaemonSet/Sidecar coletando metricas, traces e logs (portas 8125/8126)")
+        L.append(f"- **Datadog APM** — Distributed tracing via {dd_lib} com auto-instrumentacao")
+        L.append(f"- **Datadog Log Management** — Coleta e correlacao de logs com trace_id/span_id")
+        L.append(f"- **Datadog Dashboards** — Dashboards e alertas customizados com SLOs")
+        L.append("")
 
     L.append("## Integrações Externas")
     for e_name, e_desc in domain["ext_systems"][:3]:
@@ -547,18 +547,18 @@ def gen_doc(mmd_path, title, domain, cloud, c4_level, scenario, is_eip, stack=No
 # ═══════════════════════════════════════════════════════════════════
 
 def gen_context(domain_key, domain, cloud, scenario, is_eip):
-    """Generate C4 Context diagram — high-level conceptual view.
+    """Generate C4 Context diagram — business-level view only.
 
-    Shows only: Persons, ONE main System, cross-cutting Systems (Ory Stack,
-    OPA), System_Ext (Datadog, domain externals). No queues, databases,
-    boundaries, or individual Ory components.
+    Shows only: Persons, ONE main System, domain-specific System_Ext.
+    NO technical infrastructure (Ory, OPA, Datadog, queues, databases).
+    Those appear at Container and Component levels.
     """
     c = CLOUDS[cloud]
     L = [ELK_FRONTMATTER, "C4Context"]
     L.append(f'    title {scenario["title"]} [{c["label"]}]')
     L.append("")
 
-    # Persons
+    # Persons (business actors)
     for p_name, p_desc in domain["persons"][:2]:
         L.append(f'    Person({sid(p_name)}, "{p_name}", "{p_desc}")')
     L.append("")
@@ -568,33 +568,25 @@ def gen_context(domain_key, domain, cloud, scenario, is_eip):
     L.append(f'    System(main_system, "{domain["label"]} Platform", "{scenario["focus"]}"{sprite(cloud, compute_icon)})')
     L.append("")
 
-    # Cross-cutting systems — ONE box each (not expanded)
-    L.append(f'    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)"{sprite(cloud, cloud_svc(cloud, "iam")[1])})')
-    L.append(f'    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance"{sprite(cloud, cloud_svc(cloud, "waf")[1])})')
-    L.append(f'    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM"{sprite(cloud, cloud_svc(cloud, "monitoring")[1])})')
-    L.append("")
-
-    # External systems (domain-specific)
+    # External systems (domain-specific business systems only)
     for e_name, e_desc in domain["ext_systems"][:3]:
         L.append(f'    System_Ext({sid(e_name)}, "{e_name}", "{e_desc}")')
     L.append("")
 
-    styled = ["main_system", "ory_stack", "opa_engine"]
+    styled = ["main_system"]
 
-    # Relationships — high-level, conceptual
+    # Relationships — business-level only
     if domain["persons"]:
         L.append(f'    Rel({sid(domain["persons"][0][0])}, main_system, "Usa", "HTTPS")')
     if len(domain["persons"]) >= 2:
         L.append(f'    Rel({sid(domain["persons"][1][0])}, main_system, "Gerencia", "HTTPS")')
 
-    L.append(f'    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")')
-    L.append(f'    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")')
-    L.append(f'    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")')
-
     if domain["ext_systems"]:
         L.append(f'    Rel(main_system, {sid(domain["ext_systems"][0][0])}, "Integra com", "HTTPS/mTLS")')
     if len(domain["ext_systems"]) >= 2:
         L.append(f'    Rel(main_system, {sid(domain["ext_systems"][1][0])}, "Reporta para", "HTTPS")')
+    if len(domain["ext_systems"]) >= 3:
+        L.append(f'    Rel(main_system, {sid(domain["ext_systems"][2][0])}, "Comunica com", "HTTPS")')
 
     L.append("")
     L.extend(style_lines(cloud, styled))

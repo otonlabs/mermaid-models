@@ -17,23 +17,15 @@ C4Context
 
     System(main_system, "API Gateway Platform", "Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto de api gateway e hub de integracao", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
 
-    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
-
     System_Ext(External_Partner, "External Partner", "Parceiro externo consumidor")
     System_Ext(Internal_Microservice, "Internal Microservice", "Microservico interno")
     System_Ext(Identity_Provider, "Identity Provider", "Provedor de identidade")
 
     Rel(API_Consumer, main_system, "Usa", "HTTPS")
     Rel(API_Developer, main_system, "Gerencia", "HTTPS")
-    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
-    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
-    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
     Rel(main_system, External_Partner, "Integra com", "HTTPS/mTLS")
     Rel(main_system, Internal_Microservice, "Reporta para", "HTTPS")
+    Rel(main_system, Identity_Provider, "Comunica com", "HTTPS")
 
     UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

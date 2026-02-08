@@ -17,23 +17,15 @@ C4Context
 
     System(main_system, "Security IAM Platform", "Separa modelos de leitura e escrita com estado baseado em eventos no contexto de seguranca e gestao de identidade", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
 
-    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
-    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
-
     System_Ext(External_IdP, "External IdP", "Provedor de identidade externo")
     System_Ext(HSM_Provider, "HSM Provider", "Hardware Security Module")
     System_Ext(SIEM, "SIEM", "Security Information and Event Management")
 
     Rel(End_User, main_system, "Usa", "HTTPS")
     Rel(Security_Admin, main_system, "Gerencia", "HTTPS")
-    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
-    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
-    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
     Rel(main_system, External_IdP, "Integra com", "HTTPS/mTLS")
     Rel(main_system, HSM_Provider, "Reporta para", "HTTPS")
+    Rel(main_system, SIEM, "Comunica com", "HTTPS")
 
     UpdateElementStyle(main_system, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_stack, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

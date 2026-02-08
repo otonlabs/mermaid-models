@@ -17,23 +17,15 @@ C4Context
 
     System(main_system, "Open Banking Platform", "Divide mensagens compostas e agrega respostas aplicado ao contexto de open finance brasil", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
 
-    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
-    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
-
     System_Ext(Open_Finance_Directory, "Open Finance Directory", "Diretorio de participantes")
     System_Ext(Instituicao_Receptora, "Instituicao Receptora", "ITP que recebe dados")
     System_Ext(BACEN, "BACEN", "Regulador Open Finance")
 
     Rel(Cliente, main_system, "Usa", "HTTPS")
     Rel(TPP_Developer, main_system, "Gerencia", "HTTPS")
-    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
-    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
-    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
     Rel(main_system, Open_Finance_Directory, "Integra com", "HTTPS/mTLS")
     Rel(main_system, Instituicao_Receptora, "Reporta para", "HTTPS")
+    Rel(main_system, BACEN, "Comunica com", "HTTPS")
 
     UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

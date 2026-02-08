@@ -17,23 +17,15 @@ C4Context
 
     System(main_system, "PIX DICT Platform", "Roteamento de registros EVP, CPF, CNPJ, email e telefone para processadores especializados", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
 
-    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
-    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/Azure/svg/Networking/Front-Doors.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
-
     System_Ext(BACEN_DICT, "BACEN DICT", "API DICT do Banco Central para registro de chaves")
     System_Ext(Participante_PSP, "Participante PSP", "Instituicao participante do arranjo PIX")
     System_Ext(SPI, "SPI", "Sistema de Pagamentos Instantaneos")
 
     Rel(Correntista, main_system, "Usa", "HTTPS")
     Rel(Operador_Backoffice, main_system, "Gerencia", "HTTPS")
-    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
-    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
-    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
     Rel(main_system, BACEN_DICT, "Integra com", "HTTPS/mTLS")
     Rel(main_system, Participante_PSP, "Reporta para", "HTTPS")
+    Rel(main_system, SPI, "Comunica com", "HTTPS")
 
     UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

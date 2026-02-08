@@ -17,23 +17,15 @@ C4Context
 
     System(main_system, "DDA Platform", "Coordena transacoes distribuidas via orquestrador central no contexto de debito direto autorizado", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
 
-    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
-
     System_Ext(CIP_DDA, "CIP DDA", "Central de registro DDA")
     System_Ext(Banco_Sacado, "Banco Sacado", "Banco do pagador")
     System_Ext(Registro_Boletos, "Registro Boletos", "Sistema de registro de boletos")
 
     Rel(Sacado, main_system, "Usa", "HTTPS")
     Rel(Cedente, main_system, "Gerencia", "HTTPS")
-    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
-    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
-    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
     Rel(main_system, CIP_DDA, "Integra com", "HTTPS/mTLS")
     Rel(main_system, Banco_Sacado, "Reporta para", "HTTPS")
+    Rel(main_system, Registro_Boletos, "Comunica com", "HTTPS")
 
     UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

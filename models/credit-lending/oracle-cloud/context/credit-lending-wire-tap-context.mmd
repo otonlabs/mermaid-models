@@ -17,23 +17,15 @@ C4Context
 
     System(main_system, "Credit Lending Platform", "Intercepta e registra mensagens em transito para auditoria aplicado ao contexto de credito e emprestimos", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
 
-    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
-    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
-
     System_Ext(Bureau_Credito_SCR, "Bureau Credito SCR", "Sistema de informacoes de credito BACEN")
     System_Ext(BACEN_SCR, "BACEN SCR", "Central de risco do BACEN")
     System_Ext(Seguradora, "Seguradora", "Seguro prestamista")
 
     Rel(Solicitante, main_system, "Usa", "HTTPS")
     Rel(Analista_Credito, main_system, "Gerencia", "HTTPS")
-    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
-    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
-    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
     Rel(main_system, Bureau_Credito_SCR, "Integra com", "HTTPS/mTLS")
     Rel(main_system, BACEN_SCR, "Reporta para", "HTTPS")
+    Rel(main_system, Seguradora, "Comunica com", "HTTPS")
 
     UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

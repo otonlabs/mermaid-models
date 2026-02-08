@@ -17,23 +17,15 @@ C4Context
 
     System(main_system, "Data Pipeline Platform", "Intercepta e registra mensagens em transito para auditoria aplicado ao contexto de pipeline de dados e data lake", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
 
-    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
-    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/Azure/svg/Networking/Front-Doors.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
-
     System_Ext(Core_Banking_Source, "Core Banking Source", "Fonte de dados transacionais")
     System_Ext(Payment_Source, "Payment Source", "Fonte de dados de pagamentos")
     System_Ext(BI_Tools, "BI Tools", "Ferramentas de Business Intelligence")
 
     Rel(Data_Engineer, main_system, "Usa", "HTTPS")
     Rel(Data_Analyst, main_system, "Gerencia", "HTTPS")
-    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
-    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
-    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
     Rel(main_system, Core_Banking_Source, "Integra com", "HTTPS/mTLS")
     Rel(main_system, Payment_Source, "Reporta para", "HTTPS")
+    Rel(main_system, BI_Tools, "Comunica com", "HTTPS")
 
     UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

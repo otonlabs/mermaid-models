@@ -708,25 +708,22 @@ models/
 
 ## 3 Níveis C4 — Definição e Separação
 
-### 1. C4Context — Visão Conceitual de Alto Nível
+### 1. C4Context — Visão de Negócio de Alto Nível
 
-O diagrama de **contexto** é o mais abstrato. Mostra **apenas sistemas como caixas**, sem detalhes internos:
+O diagrama de **contexto** é o mais abstrato. Mostra **apenas a visão de negócio**: pessoas, o sistema principal e os sistemas externos com os quais ele se integra. **Nenhum detalhe técnico/infraestrutura** deve aparecer.
 
-- **Person(s)** — usuários do sistema
+- **Person(s)** — usuários/atores de negócio
 - **System** — o sistema principal como UMA ÚNICA caixa (ex: "PIX SPI Platform")
-- **System (cross-cutting)** — sistemas de suporte como UMA caixa cada:
-  - "Ory Security Stack" (Kratos + Hydra + Keto + Oathkeeper como UM sistema)
-  - "OPA Policy Engine" (como UM sistema)
-- **System_Ext** — sistemas externos (BACEN, Datadog, parceiros)
-- **Rel** — relacionamentos de alto nível entre sistemas
+- **System_Ext** — sistemas externos de negócio (BACEN, parceiros, reguladores)
+- **Rel** — relacionamentos de negócio entre sistemas
 
-**NÃO DEVE CONTER no contexto:**
+**NÃO DEVE CONTER no contexto (são detalhes técnicos de Container/Component):**
+- ❌ Ory Stack, Ory Oathkeeper, Ory Kratos, Ory Keto, Ory Hydra
+- ❌ OPA Policy Engine
+- ❌ Datadog, CloudWatch, monitoring
 - ❌ `SystemQueue`, `SystemDb` — filas e databases são detalhes de container
-- ❌ `Enterprise_Boundary` com múltiplos sub-sistemas — o sistema é UMA caixa
-- ❌ `Enterprise_Boundary("Security Layer")` — segurança é UM sistema, não um boundary
-- ❌ Componentes Ory individuais (Oathkeeper, Kratos, Keto separados) — é UM "Ory Security Stack"
-- ❌ Monitoring/CloudWatch como System_Ext separado — Datadog já cobre observabilidade
-- ❌ Ory Hydra como System_Ext separado — já faz parte do "Ory Security Stack"
+- ❌ `Enterprise_Boundary` com múltiplos sub-sistemas
+- ❌ Qualquer sistema de infraestrutura, segurança ou observabilidade
 
 **Exemplo correto de C4Context:**
 ```
@@ -738,23 +735,16 @@ C4Context
 
     System(main_system, "PIX SPI Platform", "Roteia pagamentos PIX por tipo e prioridade", $sprite="...")
 
-    System(ory_stack, "Ory Security Stack", "Identity, OAuth2, Permissions, Zero Trust Proxy", $sprite="...")
-    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego", $sprite="...")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics", $sprite="...")
-
     System_Ext(BACEN_SPI, "BACEN SPI", "Sistema de Pagamentos Instantaneos")
     System_Ext(Participante_Direto, "Participante Direto", "Instituicao com conta PI")
     System_Ext(STR, "STR", "Sistema de Transferencia de Reservas")
 
     Rel(Pagador, main_system, "Inicia pagamento PIX", "HTTPS")
-    Rel(main_system, ory_stack, "Autentica e autoriza", "HTTPS/gRPC")
-    Rel(main_system, opa_engine, "Avalia policies", "REST")
-    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS")
+    Rel(Recebedor, main_system, "Recebe pagamento PIX", "HTTPS")
     Rel(main_system, BACEN_SPI, "Integra com SPI", "HTTPS/mTLS")
+    Rel(main_system, Participante_Direto, "Reporta para", "HTTPS")
 
     UpdateElementStyle(main_system, ...)
-    UpdateElementStyle(ory_stack, ...)
-    UpdateElementStyle(opa_engine, ...)
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
@@ -872,12 +862,8 @@ Script que usa `npx @mermaid-js/mermaid-cli` para validar a sintaxe dos arquivos
 ### Elementos que DEVEM ter $sprite
 
 #### C4Context
-- `System(opa_engine, ...)` → ícone WAF/Security da cloud (`waf`)
-- `System(ory_oathkeeper, ...)` → ícone API Gateway da cloud
-- `System(ory_kratos, ...)` → ícone IAM da cloud
-- `System(ory_keto, ...)` → ícone Secret/Key Vault da cloud
-- `System_Ext(ory_hydra, ...)` → ícone API Gateway da cloud
-- `System_Ext(datadog_platform, ...)` → ícone Monitoring da cloud
+- `System(main_system, ...)` → ícone Compute da cloud
+- **NÃO incluir** Ory, OPA, Datadog no contexto (são detalhes técnicos)
 
 #### C4Container
 - `Container(opa_sidecar, ...)` → ícone WAF/Security da cloud (`waf`)
@@ -1039,7 +1025,7 @@ O layout ELK requer Mermaid 9.4+ e o plugin `mermaid-layout-elk`. Em ambientes q
 
 ## Sintaxe C4 Mermaid Confirmada (via Context7)
 
-### C4Context (alto nível — sem queues, databases, boundaries internas)
+### C4Context (apenas negócio — sem Ory, OPA, Datadog, queues, databases)
 ```
 ---
 config:
