@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de transferencia eletronica de fundos
 
 ## Componentes Principais
-- **TEF Gateway** — Gateway principal para transferencia eletronica de fundos
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **TEF Monitor** — Monitoramento e alertas de transferencia eletronica de fundos
-- **OCI Queue Queue** — canal de mensagens para pub-sub
+- **TEF Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de transfe)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

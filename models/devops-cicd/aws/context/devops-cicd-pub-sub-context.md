@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de devops e pipelines ci/cd
 
 ## Componentes Principais
-- **DevOps CICD Gateway** — Gateway principal para devops e pipelines ci/cd
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **DevOps CICD Monitor** — Monitoramento e alertas de devops e pipelines ci/cd
-- **SQS Queue** — canal de mensagens para pub-sub
+- **DevOps CICD Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de devops )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

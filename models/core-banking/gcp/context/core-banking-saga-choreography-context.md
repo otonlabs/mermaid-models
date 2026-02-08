@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via coreografia de eventos no contexto de plataforma core banking
 
 ## Componentes Principais
-- **Core Banking Command Service** — Servico de comandos para plataforma core banking
-- **Saga Choreography Handler** — Handler do padrao Saga Choreography
-- **Core Banking Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **Core Banking Platform** — sistema principal (Coordena transacoes distribuidas via coreografia de eventos no contexto de plata)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

@@ -17,10 +17,9 @@ Context
 Encaminha mensagens nao processaveis para canal de dead letter aplicado ao contexto de processamento de pagamentos
 
 ## Componentes Principais
-- **Payments Gateway** — Gateway principal para processamento de pagamentos
-- **Dead Letter Channel Engine** — Motor de dead letter channel para processamento
-- **Payments Monitor** — Monitoramento e alertas de processamento de pagamentos
-- **OCI Queue Queue** — canal de mensagens para dead-letter
+- **Payments Platform** — sistema principal (Encaminha mensagens nao processaveis para canal de dead letter aplicado ao conte)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

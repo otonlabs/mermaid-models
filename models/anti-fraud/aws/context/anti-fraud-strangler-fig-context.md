@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de motor anti-fraude e risco
 
 ## Componentes Principais
-- **Anti-Fraud Command Service** — Servico de comandos para motor anti-fraude e risco
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **Anti-Fraud Query Service** — Servico de consultas otimizadas
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **Anti-Fraud Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de motor anti-fra)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

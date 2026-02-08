@@ -17,10 +17,9 @@ Context
 Encaminha mensagens nao processaveis para canal de dead letter aplicado ao contexto de know your customer e anti-lavagem
 
 ## Componentes Principais
-- **KYC AML Gateway** — Gateway principal para know your customer e anti-lavagem
-- **Dead Letter Channel Engine** — Motor de dead letter channel para processamento
-- **KYC AML Monitor** — Monitoramento e alertas de know your customer e anti-lavagem
-- **SQS Queue** — canal de mensagens para dead-letter
+- **KYC AML Platform** — sistema principal (Encaminha mensagens nao processaveis para canal de dead letter aplicado ao conte)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

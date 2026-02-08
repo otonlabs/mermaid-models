@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de gestao de tesouraria
 
 ## Componentes Principais
-- **Treasury Command Service** — Servico de comandos para gestao de tesouraria
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **Treasury Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Treasury Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de gestao de teso)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

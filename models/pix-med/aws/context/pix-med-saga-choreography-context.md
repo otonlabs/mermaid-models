@@ -17,10 +17,9 @@ Context
 Coreografia de eventos entre PSP pagador, PSP recebedor e BACEN
 
 ## Componentes Principais
-- **Payer PSP Events** — Publica abertura de caso MED pelo PSP pagador
-- **Receiver PSP Events** — Consome notificacao e publica bloqueio cautelar
-- **BACEN MED Relay** — Sincroniza estado do caso com API MED BACEN
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **PIX MED Platform** — sistema principal (Coreografia de eventos entre PSP pagador, PSP recebedor e BACEN)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

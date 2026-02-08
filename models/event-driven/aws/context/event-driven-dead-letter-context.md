@@ -17,10 +17,9 @@ Context
 Encaminha mensagens nao processaveis para canal de dead letter aplicado ao contexto de arquitetura event-driven
 
 ## Componentes Principais
-- **Event Driven Gateway** — Gateway principal para arquitetura event-driven
-- **Dead Letter Channel Engine** — Motor de dead letter channel para processamento
-- **Event Driven Monitor** — Monitoramento e alertas de arquitetura event-driven
-- **SQS Queue** — canal de mensagens para dead-letter
+- **Event Driven Platform** — sistema principal (Encaminha mensagens nao processaveis para canal de dead letter aplicado ao conte)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

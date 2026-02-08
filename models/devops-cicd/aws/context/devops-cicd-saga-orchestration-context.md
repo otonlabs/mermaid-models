@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via orquestrador central no contexto de devops e pipelines ci/cd
 
 ## Componentes Principais
-- **DevOps CICD Command Service** — Servico de comandos para devops e pipelines ci/cd
-- **Saga Orchestration Handler** — Handler do padrao Saga Orchestration
-- **DevOps CICD Query Service** — Servico de consultas otimizadas
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **DevOps CICD Platform** — sistema principal (Coordena transacoes distribuidas via orquestrador central no contexto de devops )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

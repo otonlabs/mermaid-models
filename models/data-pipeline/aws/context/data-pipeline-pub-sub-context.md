@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de pipeline de dados e data lake
 
 ## Componentes Principais
-- **Data Pipeline Gateway** — Gateway principal para pipeline de dados e data lake
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Data Pipeline Monitor** — Monitoramento e alertas de pipeline de dados e data lake
-- **SQS Queue** — canal de mensagens para pub-sub
+- **Data Pipeline Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de pipelin)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

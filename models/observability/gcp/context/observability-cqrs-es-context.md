@@ -17,10 +17,9 @@ Context
 Separa modelos de leitura e escrita com estado baseado em eventos no contexto de observabilidade e monitoramento
 
 ## Componentes Principais
-- **Observability Command Service** — Servico de comandos para observabilidade e monitoramento
-- **CQRS + Event Sourcing Handler** — Handler do padrao CQRS + Event Sourcing
-- **Observability Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **Observability Platform** — sistema principal (Separa modelos de leitura e escrita com estado baseado em eventos no contexto de)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

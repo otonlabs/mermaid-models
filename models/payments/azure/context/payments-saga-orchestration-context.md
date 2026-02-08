@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via orquestrador central no contexto de processamento de pagamentos
 
 ## Componentes Principais
-- **Payments Command Service** — Servico de comandos para processamento de pagamentos
-- **Saga Orchestration Handler** — Handler do padrao Saga Orchestration
-- **Payments Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Payments Platform** — sistema principal (Coordena transacoes distribuidas via orquestrador central no contexto de process)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

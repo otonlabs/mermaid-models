@@ -17,10 +17,9 @@ Context
 Previne falhas em cascata com circuit breaker pattern no contexto de rede do sistema financeiro nacional
 
 ## Componentes Principais
-- **RSFN Connect Command Service** — Servico de comandos para rede do sistema financeiro nacional
-- **Circuit Breaker Handler** — Handler do padrao Circuit Breaker
-- **RSFN Connect Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **RSFN Connect Platform** — sistema principal (Previne falhas em cascata com circuit breaker pattern no contexto de rede do sis)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

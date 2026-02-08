@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de pipeline de dados e data lake
 
 ## Componentes Principais
-- **Data Pipeline Gateway** — Gateway principal para pipeline de dados e data lake
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Data Pipeline Monitor** — Monitoramento e alertas de pipeline de dados e data lake
-- **OCI Queue Queue** — canal de mensagens para splitter-aggregator
+- **Data Pipeline Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de pipeline d)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

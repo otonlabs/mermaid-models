@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de credito e emprestimos
 
 ## Componentes Principais
-- **Credit Lending Gateway** — Gateway principal para credito e emprestimos
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Credit Lending Monitor** — Monitoramento e alertas de credito e emprestimos
-- **SQS Queue** — canal de mensagens para pub-sub
+- **Credit Lending Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de credito)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

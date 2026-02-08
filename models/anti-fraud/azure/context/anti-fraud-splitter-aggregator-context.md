@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de motor anti-fraude e risco
 
 ## Componentes Principais
-- **Anti-Fraud Gateway** — Gateway principal para motor anti-fraude e risco
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Anti-Fraud Monitor** — Monitoramento e alertas de motor anti-fraude e risco
-- **Service Bus Queue Queue** — canal de mensagens para splitter-aggregator
+- **Anti-Fraud Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de motor anti)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

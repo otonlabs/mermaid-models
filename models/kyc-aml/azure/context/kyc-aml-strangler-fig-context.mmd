@@ -12,48 +12,28 @@ config:
 C4Context
     title KYC AML com Strangler Fig [Azure]
 
-    Enterprise_Boundary(b0, "KYC AML Platform") {
-        Person(Cliente, "Cliente", "Pessoa em processo de onboarding")
-        Person(Analista_Compliance, "Analista Compliance", "Analista de PLD/FT")
-        System(KYC_AML_Command_Service, "KYC AML Command Service", "Servico de comandos para know your customer e anti-lavagem", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
-        System(Strangler_Fig_Handler, "Strangler Fig Handler", "Handler do padrao Strangler Fig", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
-        System(KYC_AML_Query_Service, "KYC AML Query Service", "Servico de consultas otimizadas", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
-        SystemDb(main_db, "Azure SQL Database", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/SQL-Database.svg")
-    }
+    Person(Cliente, "Cliente", "Pessoa em processo de onboarding")
+    Person(Analista_Compliance, "Analista Compliance", "Analista de PLD/FT")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/Azure/svg/Networking/Front-Doors.svg")
-    }
+    System(main_system, "KYC AML Platform", "Migra incrementalmente de sistema legado para novo no contexto de know your customer e anti-lavagem", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/Azure/svg/Networking/Front-Doors.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
 
     System_Ext(Receita_Federal, "Receita Federal", "Validacao de CPF/CNPJ")
     System_Ext(COAF, "COAF", "Conselho de Controle de Atividades Financeiras")
     System_Ext(OFAC_Sanctions, "OFAC Sanctions", "Lista de sancoes internacionais")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
-    System_Ext(monitoring, "Azure Monitor", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
 
-    Rel(Cliente, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, KYC_AML_Command_Service, "Roteia request autenticado", "HTTPS")
-    Rel(KYC_AML_Command_Service, Strangler_Fig_Handler, "Coordena com", "gRPC/Internal")
-    Rel(Strangler_Fig_Handler, main_db, "Persiste estado", "Azure SQL Database")
-    Rel(KYC_AML_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(KYC_AML_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(KYC_AML_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(KYC_AML_Query_Service, monitoring, "Reporta metricas", "HTTPS")
-    Rel(KYC_AML_Command_Service, Receita_Federal, "Integra com", "HTTPS/mTLS")
-    Rel(KYC_AML_Query_Service, COAF, "Reporta para", "HTTPS")
+    Rel(Cliente, main_system, "Usa", "HTTPS")
+    Rel(Analista_Compliance, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, Receita_Federal, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, COAF, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(KYC_AML_Command_Service, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(Strangler_Fig_Handler, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(KYC_AML_Query_Service, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

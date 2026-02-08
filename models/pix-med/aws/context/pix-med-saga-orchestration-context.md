@@ -17,10 +17,9 @@ Context
 Steps: notificar, bloquear, analisar, decidir, devolver/liberar com compensacao
 
 ## Componentes Principais
-- **MED Orchestrator** — Coordena fluxo completo com prazos regulatorios
-- **Block Manager** — Gerencia bloqueio e desbloqueio cautelar de recursos
-- **Refund Engine** — Executa devolucao parcial ou total ao pagador
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **PIX MED Platform** — sistema principal (Steps: notificar, bloquear, analisar, decidir, devolver/liberar com compensacao)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

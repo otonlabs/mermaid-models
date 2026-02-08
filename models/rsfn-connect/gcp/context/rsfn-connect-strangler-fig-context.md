@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de rede do sistema financeiro nacional
 
 ## Componentes Principais
-- **RSFN Connect Command Service** — Servico de comandos para rede do sistema financeiro nacional
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **RSFN Connect Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **RSFN Connect Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de rede do sistem)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

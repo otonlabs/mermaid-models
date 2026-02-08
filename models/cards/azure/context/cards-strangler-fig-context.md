@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de processamento de cartoes
 
 ## Componentes Principais
-- **Cards Command Service** — Servico de comandos para processamento de cartoes
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **Cards Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Cards Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de processamento )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

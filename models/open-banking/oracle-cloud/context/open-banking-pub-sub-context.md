@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de open finance brasil
 
 ## Componentes Principais
-- **Open Banking Gateway** — Gateway principal para open finance brasil
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Open Banking Monitor** — Monitoramento e alertas de open finance brasil
-- **OCI Queue Queue** — canal de mensagens para pub-sub
+- **Open Banking Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de open fi)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

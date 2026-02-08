@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via coreografia de eventos no contexto de seguranca e gestao de identidade
 
 ## Componentes Principais
-- **Security IAM Command Service** — Servico de comandos para seguranca e gestao de identidade
-- **Saga Choreography Handler** — Handler do padrao Saga Choreography
-- **Security IAM Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Security IAM Platform** — sistema principal (Coordena transacoes distribuidas via coreografia de eventos no contexto de segur)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

@@ -12,48 +12,28 @@ config:
 C4Context
     title Core Banking com CQRS + Event Sourcing [Azure]
 
-    Enterprise_Boundary(b0, "Core Banking Platform") {
-        Person(Correntista, "Correntista", "Cliente com conta corrente")
-        Person(Gerente_Conta, "Gerente Conta", "Gerente de relacionamento")
-        System(Core_Banking_Command_Service, "Core Banking Command Service", "Servico de comandos para plataforma core banking", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
-        System(CQRS___Event_Sourcing_Handler, "CQRS + Event Sourcing Handler", "Handler do padrao CQRS + Event Sourcing", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
-        System(Core_Banking_Query_Service, "Core Banking Query Service", "Servico de consultas otimizadas", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
-        SystemDb(main_db, "Azure SQL Database", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/SQL-Database.svg")
-    }
+    Person(Correntista, "Correntista", "Cliente com conta corrente")
+    Person(Gerente_Conta, "Gerente Conta", "Gerente de relacionamento")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/Azure/svg/Networking/Front-Doors.svg")
-    }
+    System(main_system, "Core Banking Platform", "Separa modelos de leitura e escrita com estado baseado em eventos no contexto de plataforma core banking", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/Azure/svg/Networking/Front-Doors.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
 
     System_Ext(CIP, "CIP", "Camara Interbancaria de Pagamentos")
     System_Ext(BACEN, "BACEN", "Banco Central do Brasil")
     System_Ext(Bureau_Credito, "Bureau Credito", "Serasa, SPC, Boa Vista")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
-    System_Ext(monitoring, "Azure Monitor", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
 
-    Rel(Correntista, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, Core_Banking_Command_Service, "Roteia request autenticado", "HTTPS")
-    Rel(Core_Banking_Command_Service, CQRS___Event_Sourcing_Handler, "Coordena com", "gRPC/Internal")
-    Rel(CQRS___Event_Sourcing_Handler, main_db, "Persiste estado", "Azure SQL Database")
-    Rel(Core_Banking_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(Core_Banking_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(Core_Banking_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(Core_Banking_Query_Service, monitoring, "Reporta metricas", "HTTPS")
-    Rel(Core_Banking_Command_Service, CIP, "Integra com", "HTTPS/mTLS")
-    Rel(Core_Banking_Query_Service, BACEN, "Reporta para", "HTTPS")
+    Rel(Correntista, main_system, "Usa", "HTTPS")
+    Rel(Gerente_Conta, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, CIP, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, BACEN, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(Core_Banking_Command_Service, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(CQRS___Event_Sourcing_Handler, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(Core_Banking_Query_Service, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

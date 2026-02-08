@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de motor anti-fraude e risco
 
 ## Componentes Principais
-- **Anti-Fraud Gateway** — Gateway principal para motor anti-fraude e risco
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Anti-Fraud Monitor** — Monitoramento e alertas de motor anti-fraude e risco
-- **Cloud Tasks Queue** — canal de mensagens para pub-sub
+- **Anti-Fraud Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de motor a)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

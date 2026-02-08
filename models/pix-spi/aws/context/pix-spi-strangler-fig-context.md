@@ -17,10 +17,9 @@ Context
 Migracao gradual de motor de pagamentos monolitico para microservicos
 
 ## Componentes Principais
-- **PIX Traffic Router** — Roteia pagamentos entre motor legado e novo
-- **Legacy Payment Engine** — Motor monolitico de pagamentos PIX v1
-- **New Payment Microservices** — Novo motor baseado em microservicos e event sourcing
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **PIX SPI Platform** — sistema principal (Migracao gradual de motor de pagamentos monolitico para microservicos)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de reconciliacao financeira
 
 ## Componentes Principais
-- **Reconciliation Gateway** — Gateway principal para reconciliacao financeira
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Reconciliation Monitor** — Monitoramento e alertas de reconciliacao financeira
-- **Service Bus Queue Queue** — canal de mensagens para pub-sub
+- **Reconciliation Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de reconci)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

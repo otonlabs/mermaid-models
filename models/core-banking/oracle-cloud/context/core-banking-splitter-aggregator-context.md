@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de plataforma core banking
 
 ## Componentes Principais
-- **Core Banking Gateway** — Gateway principal para plataforma core banking
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Core Banking Monitor** — Monitoramento e alertas de plataforma core banking
-- **OCI Queue Queue** — canal de mensagens para splitter-aggregator
+- **Core Banking Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de plataforma)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

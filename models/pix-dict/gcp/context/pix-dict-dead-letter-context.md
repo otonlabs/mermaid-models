@@ -17,10 +17,9 @@ Context
 Recuperacao de mensagens de sincronizacao DICT que falharam
 
 ## Componentes Principais
-- **DICT Sync Service** — Sincroniza base local com DICT BACEN
-- **DLQ Processor** — Reprocessa mensagens que falharam na sincronizacao
-- **Alert Manager** — Notifica operadores sobre falhas persistentes
-- **Cloud Tasks Queue** — canal de mensagens para dead-letter
+- **PIX DICT Platform** — sistema principal (Recuperacao de mensagens de sincronizacao DICT que falharam)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

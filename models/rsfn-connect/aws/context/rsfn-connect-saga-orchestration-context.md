@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via orquestrador central no contexto de rede do sistema financeiro nacional
 
 ## Componentes Principais
-- **RSFN Connect Command Service** — Servico de comandos para rede do sistema financeiro nacional
-- **Saga Orchestration Handler** — Handler do padrao Saga Orchestration
-- **RSFN Connect Query Service** — Servico de consultas otimizadas
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **RSFN Connect Platform** — sistema principal (Coordena transacoes distribuidas via orquestrador central no contexto de rede do)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

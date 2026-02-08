@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de processamento de pagamentos
 
 ## Componentes Principais
-- **Payments Gateway** — Gateway principal para processamento de pagamentos
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Payments Monitor** — Monitoramento e alertas de processamento de pagamentos
-- **Cloud Tasks Queue** — canal de mensagens para splitter-aggregator
+- **Payments Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de processame)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

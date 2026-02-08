@@ -17,10 +17,9 @@ Context
 Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto de investimentos e patrimonio
 
 ## Componentes Principais
-- **Investments Gateway** — Gateway principal para investimentos e patrimonio
-- **Content-Based Router Engine** — Motor de content-based router para processamento
-- **Investments Monitor** — Monitoramento e alertas de investimentos e patrimonio
-- **Service Bus Queue Queue** — canal de mensagens para content-based-router
+- **Investments Platform** — sistema principal (Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

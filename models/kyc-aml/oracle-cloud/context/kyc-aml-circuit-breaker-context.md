@@ -17,10 +17,9 @@ Context
 Previne falhas em cascata com circuit breaker pattern no contexto de know your customer e anti-lavagem
 
 ## Componentes Principais
-- **KYC AML Command Service** — Servico de comandos para know your customer e anti-lavagem
-- **Circuit Breaker Handler** — Handler do padrao Circuit Breaker
-- **KYC AML Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **KYC AML Platform** — sistema principal (Previne falhas em cascata com circuit breaker pattern no contexto de know your c)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

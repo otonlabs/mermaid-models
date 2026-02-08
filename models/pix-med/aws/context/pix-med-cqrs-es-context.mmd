@@ -12,48 +12,28 @@ config:
 C4Context
     title MED com Event Sourcing para Rastreabilidade [AWS]
 
-    Enterprise_Boundary(b0, "PIX MED Platform") {
-        Person(Vitima, "Vitima", "Correntista vitima de fraude ou falha operacional")
-        Person(Analista_Fraude, "Analista Fraude", "Analisa casos MED e determina bloqueio")
-        System(MED_Command_Service, "MED Command Service", "Processa comandos de abertura, analise e devolucao", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(MED_Event_Store, "MED Event Store", "Historico imutavel de eventos do caso MED", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(MED_Query_View, "MED Query View", "Consulta de status e historico de casos MED", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        SystemDb(main_db, "Aurora PostgreSQL", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/Aurora.svg")
-    }
+    Person(Vitima, "Vitima", "Correntista vitima de fraude ou falha operacional")
+    Person(Analista_Fraude, "Analista Fraude", "Analisa casos MED e determina bloqueio")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
-    }
+    System(main_system, "PIX MED Platform", "Historico completo e imutavel de cada caso MED para auditoria BACEN", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
     System_Ext(BACEN_MED, "BACEN MED", "API MED do Banco Central para devolucoes especiais")
     System_Ext(PSP_Recebedor, "PSP Recebedor", "PSP que recebeu o PIX objeto de devolucao")
     System_Ext(Anti_Fraud_System, "Anti-Fraud System", "Sistema de deteccao de fraude")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
-    Rel(Vitima, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, MED_Command_Service, "Roteia request autenticado", "HTTPS")
-    Rel(MED_Command_Service, MED_Event_Store, "Coordena com", "gRPC/Internal")
-    Rel(MED_Event_Store, main_db, "Persiste estado", "Aurora PostgreSQL")
-    Rel(MED_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(MED_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(MED_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(MED_Query_View, monitoring, "Reporta metricas", "HTTPS")
-    Rel(MED_Command_Service, BACEN_MED, "Integra com", "HTTPS/mTLS")
-    Rel(MED_Query_View, PSP_Recebedor, "Reporta para", "HTTPS")
+    Rel(Vitima, main_system, "Usa", "HTTPS")
+    Rel(Analista_Fraude, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, BACEN_MED, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, PSP_Recebedor, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(MED_Command_Service, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(MED_Event_Store, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(MED_Query_View, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(main_db, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_system, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_stack, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

@@ -17,10 +17,9 @@ Context
 Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto de know your customer e anti-lavagem
 
 ## Componentes Principais
-- **KYC AML Gateway** — Gateway principal para know your customer e anti-lavagem
-- **Content-Based Router Engine** — Motor de content-based router para processamento
-- **KYC AML Monitor** — Monitoramento e alertas de know your customer e anti-lavagem
-- **Service Bus Queue Queue** — canal de mensagens para content-based-router
+- **KYC AML Platform** — sistema principal (Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

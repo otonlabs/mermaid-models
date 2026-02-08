@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de debito direto autorizado
 
 ## Componentes Principais
-- **DDA Gateway** — Gateway principal para debito direto autorizado
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **DDA Monitor** — Monitoramento e alertas de debito direto autorizado
-- **Cloud Tasks Queue** — canal de mensagens para splitter-aggregator
+- **DDA Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de debito dir)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

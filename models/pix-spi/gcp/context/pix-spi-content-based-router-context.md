@@ -17,10 +17,9 @@ Context
 Router que direciona PIX instantaneo, agendado, com troco e saque para processadores especificos
 
 ## Componentes Principais
-- **PIX Router** — Classifica e roteia pagamentos por tipo e prioridade
-- **Instant Processor** — Processa PIX instantaneo com SLA de 10 segundos
-- **Scheduled Processor** — Processa PIX agendado com validacao de saldo futuro
-- **Cloud Tasks Queue** — canal de mensagens para content-based-router
+- **PIX SPI Platform** — sistema principal (Router que direciona PIX instantaneo, agendado, com troco e saque para processad)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

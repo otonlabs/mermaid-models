@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de transferencia eletronica de fundos
 
 ## Componentes Principais
-- **TEF Command Service** — Servico de comandos para transferencia eletronica de fundos
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **TEF Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **TEF Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de transferencia )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

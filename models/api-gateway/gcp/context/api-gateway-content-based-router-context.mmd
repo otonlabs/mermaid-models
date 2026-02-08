@@ -12,48 +12,28 @@ config:
 C4Context
     title API Gateway com Content-Based Router [GCP]
 
-    Enterprise_Boundary(b0, "API Gateway Platform") {
-        Person(API_Consumer, "API Consumer", "Consumidor de APIs")
-        Person(API_Developer, "API Developer", "Desenvolvedor de APIs")
-        System(API_Gateway_Gateway, "API Gateway Gateway", "Gateway principal para api gateway e hub de integracao", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        System(Content_Based_Router_Engine, "Content-Based Router Engine", "Motor de content-based router para processamento", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        System(API_Gateway_Monitor, "API Gateway Monitor", "Monitoramento e alertas de api gateway e hub de integracao", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        SystemQueue(msg_queue, "Cloud Tasks Queue", "Canal de mensagens para content-based-router", $sprite="img:https://icon.icepanel.io/GCP/svg/App-Integration/Cloud-Tasks.svg")
-    }
+    Person(API_Consumer, "API Consumer", "Consumidor de APIs")
+    Person(API_Developer, "API Developer", "Desenvolvedor de APIs")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Secret-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-    }
+    System(main_system, "API Gateway Platform", "Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto de api gateway e hub de integracao", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
 
     System_Ext(External_Partner, "External Partner", "Parceiro externo consumidor")
     System_Ext(Internal_Microservice, "Internal Microservice", "Microservico interno")
     System_Ext(Identity_Provider, "Identity Provider", "Provedor de identidade")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
-    System_Ext(monitoring, "Cloud Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
 
-    Rel(API_Consumer, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, API_Gateway_Gateway, "Roteia request autenticado", "HTTPS")
-    Rel(API_Gateway_Gateway, msg_queue, "Envia mensagens", "Cloud Tasks")
-    Rel(msg_queue, Content_Based_Router_Engine, "Entrega para processamento", "Async")
-    Rel(API_Gateway_Gateway, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(API_Gateway_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(API_Gateway_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(API_Gateway_Monitor, monitoring, "Reporta metricas", "HTTPS")
-    Rel(API_Gateway_Gateway, External_Partner, "Integra com", "HTTPS/mTLS")
-    Rel(API_Gateway_Monitor, Internal_Microservice, "Reporta para", "HTTPS")
+    Rel(API_Consumer, main_system, "Usa", "HTTPS")
+    Rel(API_Developer, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, External_Partner, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, Internal_Microservice, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(API_Gateway_Gateway, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(Content_Based_Router_Engine, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(API_Gateway_Monitor, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

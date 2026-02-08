@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de open finance brasil
 
 ## Componentes Principais
-- **Open Banking Command Service** — Servico de comandos para open finance brasil
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **Open Banking Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Open Banking Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de open finance b)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

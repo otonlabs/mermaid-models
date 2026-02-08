@@ -17,10 +17,9 @@ Context
 Previne falhas em cascata com circuit breaker pattern no contexto de credito e emprestimos
 
 ## Componentes Principais
-- **Credit Lending Command Service** — Servico de comandos para credito e emprestimos
-- **Circuit Breaker Handler** — Handler do padrao Circuit Breaker
-- **Credit Lending Query Service** — Servico de consultas otimizadas
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **Credit Lending Platform** — sistema principal (Previne falhas em cascata com circuit breaker pattern no contexto de credito e e)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

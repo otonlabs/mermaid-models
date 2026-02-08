@@ -17,10 +17,9 @@ Context
 Notificacao de bloqueio cautelar para todos os canais do recebedor
 
 ## Componentes Principais
-- **Block Publisher** — Publica evento de bloqueio cautelar de recursos
-- **Channel Blocker** — Bloqueia canais PIX, TED e saque do recebedor
-- **Notification Service** — Notifica recebedor sobre bloqueio e prazo de defesa
-- **Cloud Tasks Queue** — canal de mensagens para pub-sub
+- **PIX MED Platform** — sistema principal (Notificacao de bloqueio cautelar para todos os canais do recebedor)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

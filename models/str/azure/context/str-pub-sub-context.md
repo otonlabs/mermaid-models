@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de sistema de transferencia de reservas
 
 ## Componentes Principais
-- **STR Gateway** — Gateway principal para sistema de transferencia de reservas
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **STR Monitor** — Monitoramento e alertas de sistema de transferencia de reservas
-- **Service Bus Queue Queue** — canal de mensagens para pub-sub
+- **STR Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de sistema)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

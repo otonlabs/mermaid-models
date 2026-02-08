@@ -17,10 +17,9 @@ Context
 Interceptacao e registro de todas as operacoes de chave para compliance
 
 ## Componentes Principais
-- **Key Operations Gateway** — Gateway para todas as operacoes de chave PIX
-- **Audit Tap** — Intercepta e registra operacoes para trilha de auditoria
-- **Compliance Reporter** — Gera relatorios regulatorios para o BACEN
-- **SQS Queue** — canal de mensagens para wire-tap
+- **PIX DICT Platform** — sistema principal (Interceptacao e registro de todas as operacoes de chave para compliance)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

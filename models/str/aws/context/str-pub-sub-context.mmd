@@ -12,48 +12,28 @@ config:
 C4Context
     title STR com Publish-Subscribe [AWS]
 
-    Enterprise_Boundary(b0, "STR Platform") {
-        Person(Operador_Tesouraria, "Operador Tesouraria", "Opera mesa de tesouraria")
-        Person(Gerente_Liquidez, "Gerente Liquidez", "Gerencia posicao de liquidez")
-        System(STR_Gateway, "STR Gateway", "Gateway principal para sistema de transferencia de reservas", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(Publish_Subscribe_Engine, "Publish-Subscribe Engine", "Motor de publish-subscribe para processamento", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(STR_Monitor, "STR Monitor", "Monitoramento e alertas de sistema de transferencia de reservas", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        SystemQueue(msg_queue, "SQS Queue", "Canal de mensagens para pub-sub", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
-    }
+    Person(Operador_Tesouraria, "Operador Tesouraria", "Opera mesa de tesouraria")
+    Person(Gerente_Liquidez, "Gerente Liquidez", "Gerencia posicao de liquidez")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
-    }
+    System(main_system, "STR Platform", "Broadcast de mensagens para multiplos assinantes aplicado ao contexto de sistema de transferencia de reservas", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
     System_Ext(BACEN_STR, "BACEN STR", "Sistema de Transferencia de Reservas")
     System_Ext(Banco_Participante, "Banco Participante", "Banco com conta reserva")
     System_Ext(Camara_LBTR, "Camara LBTR", "Liquidacao bruta em tempo real")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
-    Rel(Operador_Tesouraria, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, STR_Gateway, "Roteia request autenticado", "HTTPS")
-    Rel(STR_Gateway, msg_queue, "Envia mensagens", "SQS")
-    Rel(msg_queue, Publish_Subscribe_Engine, "Entrega para processamento", "Async")
-    Rel(STR_Gateway, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(STR_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(STR_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(STR_Monitor, monitoring, "Reporta metricas", "HTTPS")
-    Rel(STR_Gateway, BACEN_STR, "Integra com", "HTTPS/mTLS")
-    Rel(STR_Monitor, Banco_Participante, "Reporta para", "HTTPS")
+    Rel(Operador_Tesouraria, main_system, "Usa", "HTTPS")
+    Rel(Gerente_Liquidez, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, BACEN_STR, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, Banco_Participante, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(STR_Gateway, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(Publish_Subscribe_Engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(STR_Monitor, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(msg_queue, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_system, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_stack, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

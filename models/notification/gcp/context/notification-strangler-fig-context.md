@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de servicos de notificacao
 
 ## Componentes Principais
-- **Notification Command Service** — Servico de comandos para servicos de notificacao
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **Notification Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **Notification Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de servicos de no)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

@@ -17,10 +17,9 @@ Context
 Orquestracao do fluxo de reivindicacao com timeout de 7 dias e compensacao
 
 ## Componentes Principais
-- **Claim Orchestrator** — Coordena steps: notificar doador, aguardar resposta, transferir
-- **Timeout Controller** — Gerencia janela de 7 dias para resposta do doador
-- **Compensation Handler** — Reverte operacao se doador contestar dentro do prazo
-- **Autonomous Database** — persistência principal do domínio
+- **PIX DICT Platform** — sistema principal (Orquestracao do fluxo de reivindicacao com timeout de 7 dias e compensacao)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

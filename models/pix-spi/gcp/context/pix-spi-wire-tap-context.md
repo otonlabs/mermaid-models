@@ -17,10 +17,9 @@ Context
 Captura de metricas de latencia e volumetria de mensagens SPI para SLA monitoring
 
 ## Componentes Principais
-- **SPI Message Gateway** — Gateway de mensagens ISO 20022 com o SPI
-- **Performance Tap** — Captura tempos de resposta e volumetria em tempo real
-- **SLA Dashboard** — Consolida metricas de SLA do PIX (10s end-to-end)
-- **Cloud Tasks Queue** — canal de mensagens para wire-tap
+- **PIX SPI Platform** — sistema principal (Captura de metricas de latencia e volumetria de mensagens SPI para SLA monitorin)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

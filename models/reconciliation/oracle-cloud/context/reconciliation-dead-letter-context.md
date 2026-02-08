@@ -17,10 +17,9 @@ Context
 Encaminha mensagens nao processaveis para canal de dead letter aplicado ao contexto de reconciliacao financeira
 
 ## Componentes Principais
-- **Reconciliation Gateway** — Gateway principal para reconciliacao financeira
-- **Dead Letter Channel Engine** — Motor de dead letter channel para processamento
-- **Reconciliation Monitor** — Monitoramento e alertas de reconciliacao financeira
-- **OCI Queue Queue** — canal de mensagens para dead-letter
+- **Reconciliation Platform** — sistema principal (Encaminha mensagens nao processaveis para canal de dead letter aplicado ao conte)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

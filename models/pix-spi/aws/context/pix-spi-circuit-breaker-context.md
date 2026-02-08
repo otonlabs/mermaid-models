@@ -17,10 +17,9 @@ Context
 Protecao contra instabilidade do SPI com queue de retry e notificacao
 
 ## Componentes Principais
-- **SPI Client** — Cliente SPI com circuit breaker e retry exponential
-- **Retry Queue Manager** — Gerencia fila de pagamentos pendentes durante instabilidade
-- **Operations Alert** — Alerta operacoes sobre degradacao do SPI
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **PIX SPI Platform** — sistema principal (Protecao contra instabilidade do SPI com queue de retry e notificacao)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

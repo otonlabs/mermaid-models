@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de plataforma core banking
 
 ## Componentes Principais
-- **Core Banking Gateway** — Gateway principal para plataforma core banking
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Core Banking Monitor** — Monitoramento e alertas de plataforma core banking
-- **Cloud Tasks Queue** — canal de mensagens para pub-sub
+- **Core Banking Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de platafo)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

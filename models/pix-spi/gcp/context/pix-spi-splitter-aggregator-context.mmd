@@ -12,48 +12,28 @@ config:
 C4Context
     title Pagamento em Lote com Splitter-Aggregator [GCP]
 
-    Enterprise_Boundary(b0, "PIX SPI Platform") {
-        Person(Pagador, "Pagador", "Correntista que inicia transferencia PIX")
-        Person(Recebedor, "Recebedor", "Beneficiario do pagamento PIX")
-        System(Batch_Splitter, "Batch Splitter", "Divide arquivo de pagamentos em transacoes individuais", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        System(Individual_Processor, "Individual Processor", "Processa cada pagamento com validacao e AML", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        System(Result_Aggregator, "Result Aggregator", "Agrega status de cada pagamento no resultado do lote", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        SystemQueue(msg_queue, "Cloud Tasks Queue", "Canal de mensagens para splitter-aggregator", $sprite="img:https://icon.icepanel.io/GCP/svg/App-Integration/Cloud-Tasks.svg")
-    }
+    Person(Pagador, "Pagador", "Correntista que inicia transferencia PIX")
+    Person(Recebedor, "Recebedor", "Beneficiario do pagamento PIX")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Secret-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-    }
+    System(main_system, "PIX SPI Platform", "Split de arquivo de pagamentos em lote e agregacao de resultados individuais", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
 
     System_Ext(BACEN_SPI, "BACEN SPI", "Sistema de Pagamentos Instantaneos do Banco Central")
     System_Ext(Participante_Direto, "Participante Direto", "Instituicao com conta PI no BACEN")
     System_Ext(STR, "STR", "Sistema de Transferencia de Reservas")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
-    System_Ext(monitoring, "Cloud Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
 
-    Rel(Pagador, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, Batch_Splitter, "Roteia request autenticado", "HTTPS")
-    Rel(Batch_Splitter, msg_queue, "Envia mensagens", "Cloud Tasks")
-    Rel(msg_queue, Individual_Processor, "Entrega para processamento", "Async")
-    Rel(Batch_Splitter, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(Batch_Splitter, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(Batch_Splitter, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(Result_Aggregator, monitoring, "Reporta metricas", "HTTPS")
-    Rel(Batch_Splitter, BACEN_SPI, "Integra com", "HTTPS/mTLS")
-    Rel(Result_Aggregator, Participante_Direto, "Reporta para", "HTTPS")
+    Rel(Pagador, main_system, "Usa", "HTTPS")
+    Rel(Recebedor, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, BACEN_SPI, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, Participante_Direto, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(Batch_Splitter, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(Individual_Processor, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(Result_Aggregator, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

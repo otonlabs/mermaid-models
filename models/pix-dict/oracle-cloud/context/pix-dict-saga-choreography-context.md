@@ -17,10 +17,9 @@ Context
 Coreografia de eventos entre PSPs para manter consistencia de chaves
 
 ## Componentes Principais
-- **Key Event Publisher** — Publica eventos de criacao/alteracao de chaves
-- **PSP Sync Consumer** — Consome eventos e atualiza base local do PSP
-- **Consistency Checker** — Verifica consistencia eventual entre PSPs e DICT
-- **Autonomous Database** — persistência principal do domínio
+- **PIX DICT Platform** — sistema principal (Coreografia de eventos entre PSPs para manter consistencia de chaves)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

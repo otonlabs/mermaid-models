@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via coreografia de eventos no contexto de servicos de notificacao
 
 ## Componentes Principais
-- **Notification Command Service** — Servico de comandos para servicos de notificacao
-- **Saga Choreography Handler** — Handler do padrao Saga Choreography
-- **Notification Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Notification Platform** — sistema principal (Coordena transacoes distribuidas via coreografia de eventos no contexto de servi)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

@@ -17,10 +17,9 @@ Context
 Encaminha mensagens nao processaveis para canal de dead letter aplicado ao contexto de open finance brasil
 
 ## Componentes Principais
-- **Open Banking Gateway** — Gateway principal para open finance brasil
-- **Dead Letter Channel Engine** — Motor de dead letter channel para processamento
-- **Open Banking Monitor** — Monitoramento e alertas de open finance brasil
-- **OCI Queue Queue** — canal de mensagens para dead-letter
+- **Open Banking Platform** — sistema principal (Encaminha mensagens nao processaveis para canal de dead letter aplicado ao conte)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

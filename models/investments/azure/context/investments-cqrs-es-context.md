@@ -17,10 +17,9 @@ Context
 Separa modelos de leitura e escrita com estado baseado em eventos no contexto de investimentos e patrimonio
 
 ## Componentes Principais
-- **Investments Command Service** — Servico de comandos para investimentos e patrimonio
-- **CQRS + Event Sourcing Handler** — Handler do padrao CQRS + Event Sourcing
-- **Investments Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Investments Platform** — sistema principal (Separa modelos de leitura e escrita com estado baseado em eventos no contexto de)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

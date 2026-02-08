@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via coreografia de eventos no contexto de credito e emprestimos
 
 ## Componentes Principais
-- **Credit Lending Command Service** — Servico de comandos para credito e emprestimos
-- **Saga Choreography Handler** — Handler do padrao Saga Choreography
-- **Credit Lending Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **Credit Lending Platform** — sistema principal (Coordena transacoes distribuidas via coreografia de eventos no contexto de credi)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

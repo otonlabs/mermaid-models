@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de investimentos e patrimonio
 
 ## Componentes Principais
-- **Investments Gateway** — Gateway principal para investimentos e patrimonio
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Investments Monitor** — Monitoramento e alertas de investimentos e patrimonio
-- **Cloud Tasks Queue** — canal de mensagens para pub-sub
+- **Investments Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de investi)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

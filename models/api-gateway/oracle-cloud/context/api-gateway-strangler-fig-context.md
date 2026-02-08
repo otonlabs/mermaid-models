@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de api gateway e hub de integracao
 
 ## Componentes Principais
-- **API Gateway Command Service** — Servico de comandos para api gateway e hub de integracao
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **API Gateway Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **API Gateway Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de api gateway e )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

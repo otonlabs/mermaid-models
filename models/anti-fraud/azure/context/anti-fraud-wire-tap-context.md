@@ -17,10 +17,9 @@ Context
 Intercepta e registra mensagens em transito para auditoria aplicado ao contexto de motor anti-fraude e risco
 
 ## Componentes Principais
-- **Anti-Fraud Gateway** — Gateway principal para motor anti-fraude e risco
-- **Wire Tap Engine** — Motor de wire tap para processamento
-- **Anti-Fraud Monitor** — Monitoramento e alertas de motor anti-fraude e risco
-- **Service Bus Queue Queue** — canal de mensagens para wire-tap
+- **Anti-Fraud Platform** — sistema principal (Intercepta e registra mensagens em transito para auditoria aplicado ao contexto )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

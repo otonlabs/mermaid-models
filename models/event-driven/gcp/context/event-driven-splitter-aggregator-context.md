@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de arquitetura event-driven
 
 ## Componentes Principais
-- **Event Driven Gateway** — Gateway principal para arquitetura event-driven
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Event Driven Monitor** — Monitoramento e alertas de arquitetura event-driven
-- **Cloud Tasks Queue** — canal de mensagens para splitter-aggregator
+- **Event Driven Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de arquitetur)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

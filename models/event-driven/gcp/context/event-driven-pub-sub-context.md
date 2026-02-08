@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de arquitetura event-driven
 
 ## Componentes Principais
-- **Event Driven Gateway** — Gateway principal para arquitetura event-driven
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Event Driven Monitor** — Monitoramento e alertas de arquitetura event-driven
-- **Cloud Tasks Queue** — canal de mensagens para pub-sub
+- **Event Driven Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de arquite)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

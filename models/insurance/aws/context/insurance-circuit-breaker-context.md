@@ -17,10 +17,9 @@ Context
 Previne falhas em cascata com circuit breaker pattern no contexto de plataforma de seguros
 
 ## Componentes Principais
-- **Insurance Command Service** — Servico de comandos para plataforma de seguros
-- **Circuit Breaker Handler** — Handler do padrao Circuit Breaker
-- **Insurance Query Service** — Servico de consultas otimizadas
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **Insurance Platform** — sistema principal (Previne falhas em cascata com circuit breaker pattern no contexto de plataforma )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

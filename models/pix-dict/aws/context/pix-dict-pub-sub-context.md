@@ -17,10 +17,9 @@ Context
 Fan-out de eventos de alteracao de chaves para PSPs participantes
 
 ## Componentes Principais
-- **Key Change Detector** — Detecta alteracoes em chaves (portabilidade, exclusao)
-- **Notification Broadcaster** — Publica eventos para todos os PSPs afetados
-- **Sync Monitor** — Monitora confirmacao de sincronizacao dos PSPs
-- **SQS Queue** — canal de mensagens para pub-sub
+- **PIX DICT Platform** — sistema principal (Fan-out de eventos de alteracao de chaves para PSPs participantes)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

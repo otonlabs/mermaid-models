@@ -17,10 +17,9 @@ Context
 Separa modelos de leitura e escrita com estado baseado em eventos no contexto de processamento de cartoes
 
 ## Componentes Principais
-- **Cards Command Service** — Servico de comandos para processamento de cartoes
-- **CQRS + Event Sourcing Handler** — Handler do padrao CQRS + Event Sourcing
-- **Cards Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **Cards Platform** — sistema principal (Separa modelos de leitura e escrita com estado baseado em eventos no contexto de)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

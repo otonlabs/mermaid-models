@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de observabilidade e monitoramento
 
 ## Componentes Principais
-- **Observability Gateway** — Gateway principal para observabilidade e monitoramento
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Observability Monitor** — Monitoramento e alertas de observabilidade e monitoramento
-- **SQS Queue** — canal de mensagens para splitter-aggregator
+- **Observability Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de observabil)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

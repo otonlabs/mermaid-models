@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via coreografia de eventos no contexto de devops e pipelines ci/cd
 
 ## Componentes Principais
-- **DevOps CICD Command Service** — Servico de comandos para devops e pipelines ci/cd
-- **Saga Choreography Handler** — Handler do padrao Saga Choreography
-- **DevOps CICD Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **DevOps CICD Platform** — sistema principal (Coordena transacoes distribuidas via coreografia de eventos no contexto de devop)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

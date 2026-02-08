@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de processamento de pagamentos
 
 ## Componentes Principais
-- **Payments Gateway** — Gateway principal para processamento de pagamentos
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Payments Monitor** — Monitoramento e alertas de processamento de pagamentos
-- **Cloud Tasks Queue** — canal de mensagens para pub-sub
+- **Payments Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de process)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

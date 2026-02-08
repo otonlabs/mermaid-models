@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de know your customer e anti-lavagem
 
 ## Componentes Principais
-- **KYC AML Command Service** — Servico de comandos para know your customer e anti-lavagem
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **KYC AML Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **KYC AML Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de know your cust)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

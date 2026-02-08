@@ -17,10 +17,9 @@ Context
 Divide processo de portabilidade em validacao no doador e confirmacao no reivindicador
 
 ## Componentes Principais
-- **Portability Orchestrator** — Coordena fluxo de portabilidade entre PSPs
-- **Donor Validator** — Valida consentimento do titular no PSP doador
-- **Claimer Confirmer** — Confirma registro no PSP reivindicador
-- **OCI Queue Queue** — canal de mensagens para splitter-aggregator
+- **PIX DICT Platform** — sistema principal (Divide processo de portabilidade em validacao no doador e confirmacao no reivind)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

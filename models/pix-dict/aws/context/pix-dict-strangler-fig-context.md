@@ -17,10 +17,9 @@ Context
 Migracao gradual do sistema legado de chaves para nova plataforma cloud-native
 
 ## Componentes Principais
-- **Traffic Router** — Roteia requests entre sistema legado e novo baseado em feature flags
-- **Legacy DICT Adapter** — Adapter para sistema legado de registro de chaves
-- **New DICT Platform** — Nova plataforma cloud-native com API DICT v2
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **PIX DICT Platform** — sistema principal (Migracao gradual do sistema legado de chaves para nova plataforma cloud-native)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

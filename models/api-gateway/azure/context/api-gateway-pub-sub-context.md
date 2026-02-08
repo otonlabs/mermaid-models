@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de api gateway e hub de integracao
 
 ## Componentes Principais
-- **API Gateway Gateway** — Gateway principal para api gateway e hub de integracao
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **API Gateway Monitor** — Monitoramento e alertas de api gateway e hub de integracao
-- **Service Bus Queue Queue** — canal de mensagens para pub-sub
+- **API Gateway Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de api gat)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

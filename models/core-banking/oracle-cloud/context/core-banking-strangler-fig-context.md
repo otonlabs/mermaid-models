@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de plataforma core banking
 
 ## Componentes Principais
-- **Core Banking Command Service** — Servico de comandos para plataforma core banking
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **Core Banking Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **Core Banking Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de plataforma cor)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

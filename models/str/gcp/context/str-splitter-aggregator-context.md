@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de sistema de transferencia de reservas
 
 ## Componentes Principais
-- **STR Gateway** — Gateway principal para sistema de transferencia de reservas
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **STR Monitor** — Monitoramento e alertas de sistema de transferencia de reservas
-- **Cloud Tasks Queue** — canal de mensagens para splitter-aggregator
+- **STR Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de sistema de)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

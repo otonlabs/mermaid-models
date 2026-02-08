@@ -17,10 +17,9 @@ Context
 Previne falhas em cascata com circuit breaker pattern no contexto de arquitetura event-driven
 
 ## Componentes Principais
-- **Event Driven Command Service** — Servico de comandos para arquitetura event-driven
-- **Circuit Breaker Handler** — Handler do padrao Circuit Breaker
-- **Event Driven Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **Event Driven Platform** — sistema principal (Previne falhas em cascata com circuit breaker pattern no contexto de arquitetura)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

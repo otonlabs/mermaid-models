@@ -12,48 +12,28 @@ config:
 C4Context
     title Cards com Saga Choreography [Azure]
 
-    Enterprise_Boundary(b0, "Cards Platform") {
-        Person(Portador, "Portador", "Titular do cartao")
-        Person(Operador_Cartoes, "Operador Cartoes", "Operador de gestao de cartoes")
-        System(Cards_Command_Service, "Cards Command Service", "Servico de comandos para processamento de cartoes", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
-        System(Saga_Choreography_Handler, "Saga Choreography Handler", "Handler do padrao Saga Choreography", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
-        System(Cards_Query_Service, "Cards Query Service", "Servico de consultas otimizadas", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
-        SystemDb(main_db, "Azure SQL Database", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/Azure/svg/Databases/SQL-Database.svg")
-    }
+    Person(Portador, "Portador", "Titular do cartao")
+    Person(Operador_Cartoes, "Operador Cartoes", "Operador de gestao de cartoes")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/Azure/svg/Networking/Front-Doors.svg")
-    }
+    System(main_system, "Cards Platform", "Coordena transacoes distribuidas via coreografia de eventos no contexto de processamento de cartoes", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/Azure/svg/Networking/Front-Doors.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
 
     System_Ext(Bandeira_Visa_Master, "Bandeira Visa Master", "Redes de cartao")
     System_Ext(TSP_Token_Requestor, "TSP Token Requestor", "Provedor de tokenizacao")
     System_Ext(Rede_Adquirente, "Rede Adquirente", "Processadora de transacoes")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/Azure/svg/Integration/API-Management-Services.svg")
-    System_Ext(monitoring, "Azure Monitor", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
 
-    Rel(Portador, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, Cards_Command_Service, "Roteia request autenticado", "HTTPS")
-    Rel(Cards_Command_Service, Saga_Choreography_Handler, "Coordena com", "gRPC/Internal")
-    Rel(Saga_Choreography_Handler, main_db, "Persiste estado", "Azure SQL Database")
-    Rel(Cards_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(Cards_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(Cards_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(Cards_Query_Service, monitoring, "Reporta metricas", "HTTPS")
-    Rel(Cards_Command_Service, Bandeira_Visa_Master, "Integra com", "HTTPS/mTLS")
-    Rel(Cards_Query_Service, TSP_Token_Requestor, "Reporta para", "HTTPS")
+    Rel(Portador, main_system, "Usa", "HTTPS")
+    Rel(Operador_Cartoes, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, Bandeira_Visa_Master, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, TSP_Token_Requestor, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(Cards_Command_Service, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(Saga_Choreography_Handler, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(Cards_Query_Service, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
-    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

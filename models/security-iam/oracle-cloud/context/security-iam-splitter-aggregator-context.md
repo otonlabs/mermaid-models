@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de seguranca e gestao de identidade
 
 ## Componentes Principais
-- **Security IAM Gateway** — Gateway principal para seguranca e gestao de identidade
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Security IAM Monitor** — Monitoramento e alertas de seguranca e gestao de identidade
-- **OCI Queue Queue** — canal de mensagens para splitter-aggregator
+- **Security IAM Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de seguranca )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

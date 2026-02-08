@@ -17,10 +17,9 @@ Context
 Intercepta e registra mensagens em transito para auditoria aplicado ao contexto de investimentos e patrimonio
 
 ## Componentes Principais
-- **Investments Gateway** — Gateway principal para investimentos e patrimonio
-- **Wire Tap Engine** — Motor de wire tap para processamento
-- **Investments Monitor** — Monitoramento e alertas de investimentos e patrimonio
-- **Cloud Tasks Queue** — canal de mensagens para wire-tap
+- **Investments Platform** — sistema principal (Intercepta e registra mensagens em transito para auditoria aplicado ao contexto )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

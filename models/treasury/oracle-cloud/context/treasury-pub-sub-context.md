@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de gestao de tesouraria
 
 ## Componentes Principais
-- **Treasury Gateway** — Gateway principal para gestao de tesouraria
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Treasury Monitor** — Monitoramento e alertas de gestao de tesouraria
-- **OCI Queue Queue** — canal de mensagens para pub-sub
+- **Treasury Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de gestao )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

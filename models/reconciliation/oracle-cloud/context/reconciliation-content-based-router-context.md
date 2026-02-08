@@ -17,10 +17,9 @@ Context
 Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto de reconciliacao financeira
 
 ## Componentes Principais
-- **Reconciliation Gateway** — Gateway principal para reconciliacao financeira
-- **Content-Based Router Engine** — Motor de content-based router para processamento
-- **Reconciliation Monitor** — Monitoramento e alertas de reconciliacao financeira
-- **OCI Queue Queue** — canal de mensagens para content-based-router
+- **Reconciliation Platform** — sistema principal (Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

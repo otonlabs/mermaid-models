@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de know your customer e anti-lavagem
 
 ## Componentes Principais
-- **KYC AML Gateway** — Gateway principal para know your customer e anti-lavagem
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **KYC AML Monitor** — Monitoramento e alertas de know your customer e anti-lavagem
-- **Service Bus Queue Queue** — canal de mensagens para pub-sub
+- **KYC AML Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de know yo)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

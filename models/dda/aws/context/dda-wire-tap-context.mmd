@@ -12,48 +12,28 @@ config:
 C4Context
     title DDA com Wire Tap [AWS]
 
-    Enterprise_Boundary(b0, "DDA Platform") {
-        Person(Sacado, "Sacado", "Pagador do boleto")
-        Person(Cedente, "Cedente", "Emitente do boleto")
-        System(DDA_Gateway, "DDA Gateway", "Gateway principal para debito direto autorizado", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(Wire_Tap_Engine, "Wire Tap Engine", "Motor de wire tap para processamento", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(DDA_Monitor, "DDA Monitor", "Monitoramento e alertas de debito direto autorizado", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        SystemQueue(msg_queue, "SQS Queue", "Canal de mensagens para wire-tap", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
-    }
+    Person(Sacado, "Sacado", "Pagador do boleto")
+    Person(Cedente, "Cedente", "Emitente do boleto")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
-    }
+    System(main_system, "DDA Platform", "Intercepta e registra mensagens em transito para auditoria aplicado ao contexto de debito direto autorizado", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
     System_Ext(CIP_DDA, "CIP DDA", "Central de registro DDA")
     System_Ext(Banco_Sacado, "Banco Sacado", "Banco do pagador")
     System_Ext(Registro_Boletos, "Registro Boletos", "Sistema de registro de boletos")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
-    Rel(Sacado, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, DDA_Gateway, "Roteia request autenticado", "HTTPS")
-    Rel(DDA_Gateway, msg_queue, "Envia mensagens", "SQS")
-    Rel(msg_queue, Wire_Tap_Engine, "Entrega para processamento", "Async")
-    Rel(DDA_Gateway, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(DDA_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(DDA_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(DDA_Monitor, monitoring, "Reporta metricas", "HTTPS")
-    Rel(DDA_Gateway, CIP_DDA, "Integra com", "HTTPS/mTLS")
-    Rel(DDA_Monitor, Banco_Sacado, "Reporta para", "HTTPS")
+    Rel(Sacado, main_system, "Usa", "HTTPS")
+    Rel(Cedente, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, CIP_DDA, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, Banco_Sacado, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(DDA_Gateway, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(Wire_Tap_Engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(DDA_Monitor, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(msg_queue, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_system, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_stack, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

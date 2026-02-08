@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de observabilidade e monitoramento
 
 ## Componentes Principais
-- **Observability Gateway** — Gateway principal para observabilidade e monitoramento
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Observability Monitor** — Monitoramento e alertas de observabilidade e monitoramento
-- **OCI Queue Queue** — canal de mensagens para pub-sub
+- **Observability Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de observa)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

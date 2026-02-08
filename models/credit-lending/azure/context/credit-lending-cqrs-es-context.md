@@ -17,10 +17,9 @@ Context
 Separa modelos de leitura e escrita com estado baseado em eventos no contexto de credito e emprestimos
 
 ## Componentes Principais
-- **Credit Lending Command Service** — Servico de comandos para credito e emprestimos
-- **CQRS + Event Sourcing Handler** — Handler do padrao CQRS + Event Sourcing
-- **Credit Lending Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Credit Lending Platform** — sistema principal (Separa modelos de leitura e escrita com estado baseado em eventos no contexto de)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

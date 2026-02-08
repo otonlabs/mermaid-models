@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de rede do sistema financeiro nacional
 
 ## Componentes Principais
-- **RSFN Connect Gateway** — Gateway principal para rede do sistema financeiro nacional
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **RSFN Connect Monitor** — Monitoramento e alertas de rede do sistema financeiro nacional
-- **Cloud Tasks Queue** — canal de mensagens para pub-sub
+- **RSFN Connect Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de rede do)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

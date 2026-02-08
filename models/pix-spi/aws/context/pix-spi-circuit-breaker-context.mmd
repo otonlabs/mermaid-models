@@ -12,48 +12,28 @@ config:
 C4Context
     title Circuit Breaker para API SPI BACEN [AWS]
 
-    Enterprise_Boundary(b0, "PIX SPI Platform") {
-        Person(Pagador, "Pagador", "Correntista que inicia transferencia PIX")
-        Person(Recebedor, "Recebedor", "Beneficiario do pagamento PIX")
-        System(SPI_Client, "SPI Client", "Cliente SPI com circuit breaker e retry exponential", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(Retry_Queue_Manager, "Retry Queue Manager", "Gerencia fila de pagamentos pendentes durante instabilidade", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(Operations_Alert, "Operations Alert", "Alerta operacoes sobre degradacao do SPI", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        SystemDb(main_db, "Aurora PostgreSQL", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/AWS/svg/Database/Aurora.svg")
-    }
+    Person(Pagador, "Pagador", "Correntista que inicia transferencia PIX")
+    Person(Recebedor, "Recebedor", "Beneficiario do pagamento PIX")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
-    }
+    System(main_system, "PIX SPI Platform", "Protecao contra instabilidade do SPI com queue de retry e notificacao", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
     System_Ext(BACEN_SPI, "BACEN SPI", "Sistema de Pagamentos Instantaneos do Banco Central")
     System_Ext(Participante_Direto, "Participante Direto", "Instituicao com conta PI no BACEN")
     System_Ext(STR, "STR", "Sistema de Transferencia de Reservas")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
-    Rel(Pagador, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, SPI_Client, "Roteia request autenticado", "HTTPS")
-    Rel(SPI_Client, Retry_Queue_Manager, "Coordena com", "gRPC/Internal")
-    Rel(Retry_Queue_Manager, main_db, "Persiste estado", "Aurora PostgreSQL")
-    Rel(SPI_Client, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(SPI_Client, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(SPI_Client, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(Operations_Alert, monitoring, "Reporta metricas", "HTTPS")
-    Rel(SPI_Client, BACEN_SPI, "Integra com", "HTTPS/mTLS")
-    Rel(Operations_Alert, Participante_Direto, "Reporta para", "HTTPS")
+    Rel(Pagador, main_system, "Usa", "HTTPS")
+    Rel(Recebedor, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, BACEN_SPI, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, Participante_Direto, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(SPI_Client, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(Retry_Queue_Manager, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(Operations_Alert, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(main_db, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_system, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_stack, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

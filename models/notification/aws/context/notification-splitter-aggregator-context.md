@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de servicos de notificacao
 
 ## Componentes Principais
-- **Notification Gateway** — Gateway principal para servicos de notificacao
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Notification Monitor** — Monitoramento e alertas de servicos de notificacao
-- **SQS Queue** — canal de mensagens para splitter-aggregator
+- **Notification Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de servicos d)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

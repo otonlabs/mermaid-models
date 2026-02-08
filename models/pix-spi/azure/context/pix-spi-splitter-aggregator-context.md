@@ -17,10 +17,9 @@ Context
 Split de arquivo de pagamentos em lote e agregacao de resultados individuais
 
 ## Componentes Principais
-- **Batch Splitter** — Divide arquivo de pagamentos em transacoes individuais
-- **Individual Processor** — Processa cada pagamento com validacao e AML
-- **Result Aggregator** — Agrega status de cada pagamento no resultado do lote
-- **Service Bus Queue Queue** — canal de mensagens para splitter-aggregator
+- **PIX SPI Platform** — sistema principal (Split de arquivo de pagamentos em lote e agregacao de resultados individuais)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

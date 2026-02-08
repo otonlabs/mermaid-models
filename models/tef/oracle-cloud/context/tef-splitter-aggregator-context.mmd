@@ -12,48 +12,28 @@ config:
 C4Context
     title TEF com Splitter-Aggregator [Oracle Cloud]
 
-    Enterprise_Boundary(b0, "TEF Platform") {
-        Person(Lojista, "Lojista", "Estabelecimento comercial com POS")
-        Person(Portador_Cartao, "Portador Cartao", "Cliente que paga com cartao")
-        System(TEF_Gateway, "TEF Gateway", "Gateway principal para transferencia eletronica de fundos", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
-        System(Splitter_Aggregator_Engine, "Splitter-Aggregator Engine", "Motor de splitter-aggregator para processamento", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
-        System(TEF_Monitor, "TEF Monitor", "Monitoramento e alertas de transferencia eletronica de fundos", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
-        SystemQueue(msg_queue, "OCI Queue Queue", "Canal de mensagens para splitter-aggregator", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Queue.svg")
-    }
+    Person(Lojista, "Lojista", "Estabelecimento comercial com POS")
+    Person(Portador_Cartao, "Portador Cartao", "Cliente que paga com cartao")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
-    }
+    System(main_system, "TEF Platform", "Divide mensagens compostas e agrega respostas aplicado ao contexto de transferencia eletronica de fundos", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
 
     System_Ext(Rede_Adquirente, "Rede Adquirente", "Processadora de transacoes")
     System_Ext(Bandeira, "Bandeira", "Visa, Mastercard, Elo")
     System_Ext(Banco_Emissor, "Banco Emissor", "Banco emissor do cartao")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
-    System_Ext(monitoring, "OCI Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
 
-    Rel(Lojista, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, TEF_Gateway, "Roteia request autenticado", "HTTPS")
-    Rel(TEF_Gateway, msg_queue, "Envia mensagens", "OCI Queue")
-    Rel(msg_queue, Splitter_Aggregator_Engine, "Entrega para processamento", "Async")
-    Rel(TEF_Gateway, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(TEF_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(TEF_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(TEF_Monitor, monitoring, "Reporta metricas", "HTTPS")
-    Rel(TEF_Gateway, Rede_Adquirente, "Integra com", "HTTPS/mTLS")
-    Rel(TEF_Monitor, Bandeira, "Reporta para", "HTTPS")
+    Rel(Lojista, main_system, "Usa", "HTTPS")
+    Rel(Portador_Cartao, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, Rede_Adquirente, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, Bandeira, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(TEF_Gateway, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(Splitter_Aggregator_Engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(TEF_Monitor, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

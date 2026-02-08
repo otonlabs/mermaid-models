@@ -17,10 +17,9 @@ Context
 Previne falhas em cascata com circuit breaker pattern no contexto de open finance brasil
 
 ## Componentes Principais
-- **Open Banking Command Service** — Servico de comandos para open finance brasil
-- **Circuit Breaker Handler** — Handler do padrao Circuit Breaker
-- **Open Banking Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **Open Banking Platform** — sistema principal (Previne falhas em cascata com circuit breaker pattern no contexto de open financ)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

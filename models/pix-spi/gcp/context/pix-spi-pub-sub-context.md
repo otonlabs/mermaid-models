@@ -17,10 +17,9 @@ Context
 Notificacao em tempo real de liquidacao para tesouraria, contabilidade e reconciliacao
 
 ## Componentes Principais
-- **Settlement Publisher** — Publica eventos de liquidacao confirmada pelo SPI
-- **Treasury Consumer** — Atualiza posicao de liquidez em tempo real
-- **Accounting Consumer** — Registra lancamentos contabeis da liquidacao
-- **Cloud Tasks Queue** — canal de mensagens para pub-sub
+- **PIX SPI Platform** — sistema principal (Notificacao em tempo real de liquidacao para tesouraria, contabilidade e reconci)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

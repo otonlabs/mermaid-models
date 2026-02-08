@@ -17,10 +17,9 @@ Context
 Coreografia de eventos entre PSP pagador, SPI e PSP recebedor
 
 ## Componentes Principais
-- **Payer PSP Publisher** — Publica evento de debito confirmado
-- **SPI Relay Consumer** — Consome debito e publica para PSP recebedor
-- **Receiver PSP Consumer** — Consome e credita conta do recebedor
-- **Azure SQL Database** — persistência principal do domínio
+- **PIX SPI Platform** — sistema principal (Coreografia de eventos entre PSP pagador, SPI e PSP recebedor)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

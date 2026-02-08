@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de transferencia eletronica de fundos
 
 ## Componentes Principais
-- **TEF Gateway** — Gateway principal para transferencia eletronica de fundos
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **TEF Monitor** — Monitoramento e alertas de transferencia eletronica de fundos
-- **SQS Queue** — canal de mensagens para splitter-aggregator
+- **TEF Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de transferen)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

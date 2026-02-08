@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via orquestrador central no contexto de transferencia eletronica de fundos
 
 ## Componentes Principais
-- **TEF Command Service** — Servico de comandos para transferencia eletronica de fundos
-- **Saga Orchestration Handler** — Handler do padrao Saga Orchestration
-- **TEF Query Service** — Servico de consultas otimizadas
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **TEF Platform** — sistema principal (Coordena transacoes distribuidas via orquestrador central no contexto de transfe)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

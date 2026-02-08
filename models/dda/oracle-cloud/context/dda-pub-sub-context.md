@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de debito direto autorizado
 
 ## Componentes Principais
-- **DDA Gateway** — Gateway principal para debito direto autorizado
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **DDA Monitor** — Monitoramento e alertas de debito direto autorizado
-- **OCI Queue Queue** — canal de mensagens para pub-sub
+- **DDA Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de debito )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

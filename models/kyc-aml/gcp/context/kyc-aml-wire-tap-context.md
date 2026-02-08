@@ -17,10 +17,9 @@ Context
 Intercepta e registra mensagens em transito para auditoria aplicado ao contexto de know your customer e anti-lavagem
 
 ## Componentes Principais
-- **KYC AML Gateway** — Gateway principal para know your customer e anti-lavagem
-- **Wire Tap Engine** — Motor de wire tap para processamento
-- **KYC AML Monitor** — Monitoramento e alertas de know your customer e anti-lavagem
-- **Cloud Tasks Queue** — canal de mensagens para wire-tap
+- **KYC AML Platform** — sistema principal (Intercepta e registra mensagens em transito para auditoria aplicado ao contexto )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

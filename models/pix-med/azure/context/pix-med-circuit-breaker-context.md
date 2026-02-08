@@ -17,10 +17,9 @@ Context
 Protecao contra timeout da API MED com queue local e retry
 
 ## Componentes Principais
-- **MED Client** — Cliente API MED com circuit breaker half-open state
-- **Pending Queue** — Fila local de casos MED aguardando reenvio
-- **Ops Dashboard** — Dashboard de saude da integracao MED
-- **Azure SQL Database** — persistência principal do domínio
+- **PIX MED Platform** — sistema principal (Protecao contra timeout da API MED com queue local e retry)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

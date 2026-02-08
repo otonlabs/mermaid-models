@@ -17,10 +17,9 @@ Context
 Intercepta e registra mensagens em transito para auditoria aplicado ao contexto de pipeline de dados e data lake
 
 ## Componentes Principais
-- **Data Pipeline Gateway** — Gateway principal para pipeline de dados e data lake
-- **Wire Tap Engine** — Motor de wire tap para processamento
-- **Data Pipeline Monitor** — Monitoramento e alertas de pipeline de dados e data lake
-- **OCI Queue Queue** — canal de mensagens para wire-tap
+- **Data Pipeline Platform** — sistema principal (Intercepta e registra mensagens em transito para auditoria aplicado ao contexto )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

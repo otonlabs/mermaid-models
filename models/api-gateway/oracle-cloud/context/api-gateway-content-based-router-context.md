@@ -17,10 +17,9 @@ Context
 Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto de api gateway e hub de integracao
 
 ## Componentes Principais
-- **API Gateway Gateway** — Gateway principal para api gateway e hub de integracao
-- **Content-Based Router Engine** — Motor de content-based router para processamento
-- **API Gateway Monitor** — Monitoramento e alertas de api gateway e hub de integracao
-- **OCI Queue Queue** — canal de mensagens para content-based-router
+- **API Gateway Platform** — sistema principal (Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

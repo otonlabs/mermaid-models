@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via coreografia de eventos no contexto de rede do sistema financeiro nacional
 
 ## Componentes Principais
-- **RSFN Connect Command Service** — Servico de comandos para rede do sistema financeiro nacional
-- **Saga Choreography Handler** — Handler do padrao Saga Choreography
-- **RSFN Connect Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **RSFN Connect Platform** — sistema principal (Coordena transacoes distribuidas via coreografia de eventos no contexto de rede )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

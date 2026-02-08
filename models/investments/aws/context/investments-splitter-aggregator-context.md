@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de investimentos e patrimonio
 
 ## Componentes Principais
-- **Investments Gateway** — Gateway principal para investimentos e patrimonio
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Investments Monitor** — Monitoramento e alertas de investimentos e patrimonio
-- **SQS Queue** — canal de mensagens para splitter-aggregator
+- **Investments Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de investimen)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

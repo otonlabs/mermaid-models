@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via orquestrador central no contexto de debito direto autorizado
 
 ## Componentes Principais
-- **DDA Command Service** — Servico de comandos para debito direto autorizado
-- **Saga Orchestration Handler** — Handler do padrao Saga Orchestration
-- **DDA Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **DDA Platform** — sistema principal (Coordena transacoes distribuidas via orquestrador central no contexto de debito )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

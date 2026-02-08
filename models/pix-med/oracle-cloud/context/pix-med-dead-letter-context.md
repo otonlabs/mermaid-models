@@ -17,10 +17,9 @@ Context
 Tratamento de falhas na comunicacao com BACEN MED
 
 ## Componentes Principais
-- **MED API Client** — Cliente da API MED do BACEN com retry logic
-- **DLQ Reprocessor** — Reprocessa notificacoes que falharam na entrega ao BACEN
-- **Manual Review Queue** — Encaminha para revisao manual apos falhas persistentes
-- **OCI Queue Queue** — canal de mensagens para dead-letter
+- **PIX MED Platform** — sistema principal (Tratamento de falhas na comunicacao com BACEN MED)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

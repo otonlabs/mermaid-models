@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de seguranca e gestao de identidade
 
 ## Componentes Principais
-- **Security IAM Gateway** — Gateway principal para seguranca e gestao de identidade
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Security IAM Monitor** — Monitoramento e alertas de seguranca e gestao de identidade
-- **OCI Queue Queue** — canal de mensagens para pub-sub
+- **Security IAM Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de seguran)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

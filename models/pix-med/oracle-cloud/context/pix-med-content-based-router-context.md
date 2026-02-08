@@ -17,10 +17,9 @@ Context
 Roteamento de MED tipo 1 (fraude) vs tipo 2 (falha operacional) para fluxos distintos
 
 ## Componentes Principais
-- **MED Classifier** — Classifica notificacao MED por tipo e urgencia
-- **Fraud MED Processor** — Processa MED tipo 1 com bloqueio cautelar imediato
-- **Operational MED Processor** — Processa MED tipo 2 com analise de falha operacional
-- **OCI Queue Queue** — canal de mensagens para content-based-router
+- **PIX MED Platform** — sistema principal (Roteamento de MED tipo 1 (fraude) vs tipo 2 (falha operacional) para fluxos dist)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

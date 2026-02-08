@@ -17,10 +17,9 @@ Context
 Transicao gradual de sistema batch de devolucao para real-time MED
 
 ## Componentes Principais
-- **MED Router** — Roteia entre sistema batch legado e novo real-time
-- **Legacy Batch Refund** — Sistema batch de devolucao D+1
-- **New Real-Time MED** — Novo sistema MED real-time com event sourcing
-- **Autonomous Database** — persistência principal do domínio
+- **PIX MED Platform** — sistema principal (Transicao gradual de sistema batch de devolucao para real-time MED)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

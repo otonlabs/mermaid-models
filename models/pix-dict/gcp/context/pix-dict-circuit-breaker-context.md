@@ -17,10 +17,9 @@ Context
 Protecao contra indisponibilidade da API DICT BACEN com fallback para cache local
 
 ## Componentes Principais
-- **DICT Client** — Cliente da API DICT com circuit breaker integrado
-- **Local Cache** — Cache local de chaves para fallback em caso de falha
-- **Health Monitor** — Monitora disponibilidade da API DICT e ajusta circuit state
-- **Cloud SQL** — persistência principal do domínio
+- **PIX DICT Platform** — sistema principal (Protecao contra indisponibilidade da API DICT BACEN com fallback para cache loca)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

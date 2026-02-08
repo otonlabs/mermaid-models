@@ -17,10 +17,9 @@ Context
 Previne falhas em cascata com circuit breaker pattern no contexto de observabilidade e monitoramento
 
 ## Componentes Principais
-- **Observability Command Service** — Servico de comandos para observabilidade e monitoramento
-- **Circuit Breaker Handler** — Handler do padrao Circuit Breaker
-- **Observability Query Service** — Servico de consultas otimizadas
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **Observability Platform** — sistema principal (Previne falhas em cascata com circuit breaker pattern no contexto de observabili)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

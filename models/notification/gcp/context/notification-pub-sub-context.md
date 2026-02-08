@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de servicos de notificacao
 
 ## Componentes Principais
-- **Notification Gateway** — Gateway principal para servicos de notificacao
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Notification Monitor** — Monitoramento e alertas de servicos de notificacao
-- **Cloud Tasks Queue** — canal de mensagens para pub-sub
+- **Notification Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de servico)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

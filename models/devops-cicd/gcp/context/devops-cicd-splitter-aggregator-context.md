@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de devops e pipelines ci/cd
 
 ## Componentes Principais
-- **DevOps CICD Gateway** — Gateway principal para devops e pipelines ci/cd
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **DevOps CICD Monitor** — Monitoramento e alertas de devops e pipelines ci/cd
-- **Cloud Tasks Queue** — canal de mensagens para splitter-aggregator
+- **DevOps CICD Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de devops e p)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

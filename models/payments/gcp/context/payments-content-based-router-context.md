@@ -17,10 +17,9 @@ Context
 Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto de processamento de pagamentos
 
 ## Componentes Principais
-- **Payments Gateway** — Gateway principal para processamento de pagamentos
-- **Content-Based Router Engine** — Motor de content-based router para processamento
-- **Payments Monitor** — Monitoramento e alertas de processamento de pagamentos
-- **Cloud Tasks Queue** — canal de mensagens para content-based-router
+- **Payments Platform** — sistema principal (Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

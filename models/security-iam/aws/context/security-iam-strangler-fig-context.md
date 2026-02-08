@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de seguranca e gestao de identidade
 
 ## Componentes Principais
-- **Security IAM Command Service** — Servico de comandos para seguranca e gestao de identidade
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **Security IAM Query Service** — Servico de consultas otimizadas
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **Security IAM Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de seguranca e ge)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

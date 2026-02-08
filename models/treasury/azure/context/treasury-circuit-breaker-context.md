@@ -17,10 +17,9 @@ Context
 Previne falhas em cascata com circuit breaker pattern no contexto de gestao de tesouraria
 
 ## Componentes Principais
-- **Treasury Command Service** — Servico de comandos para gestao de tesouraria
-- **Circuit Breaker Handler** — Handler do padrao Circuit Breaker
-- **Treasury Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Treasury Platform** — sistema principal (Previne falhas em cascata com circuit breaker pattern no contexto de gestao de t)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

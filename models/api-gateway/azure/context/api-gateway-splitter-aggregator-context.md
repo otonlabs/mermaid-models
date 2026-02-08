@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de api gateway e hub de integracao
 
 ## Componentes Principais
-- **API Gateway Gateway** — Gateway principal para api gateway e hub de integracao
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **API Gateway Monitor** — Monitoramento e alertas de api gateway e hub de integracao
-- **Service Bus Queue Queue** — canal de mensagens para splitter-aggregator
+- **API Gateway Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de api gatewa)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

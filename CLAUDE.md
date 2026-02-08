@@ -706,11 +706,87 @@ models/
 | DNS | Route53 | DNS Zone | Cloud DNS | OCI DNS |
 | VPN/Network | VPC, Direct Connect | VNet, ExpressRoute | VPC, Interconnect | VCN, FastConnect |
 
-## 3 Níveis C4
+## 3 Níveis C4 — Definição e Separação
 
-1. **C4Context** - Visão de alto nível: pessoas, sistemas, fronteiras
-2. **C4Container** - Aplicações, databases, filas, dentro de cada sistema
-3. **C4Component** - Componentes internos (controllers, services, repos)
+### 1. C4Context — Visão Conceitual de Alto Nível
+
+O diagrama de **contexto** é o mais abstrato. Mostra **apenas sistemas como caixas**, sem detalhes internos:
+
+- **Person(s)** — usuários do sistema
+- **System** — o sistema principal como UMA ÚNICA caixa (ex: "PIX SPI Platform")
+- **System (cross-cutting)** — sistemas de suporte como UMA caixa cada:
+  - "Ory Security Stack" (Kratos + Hydra + Keto + Oathkeeper como UM sistema)
+  - "OPA Policy Engine" (como UM sistema)
+- **System_Ext** — sistemas externos (BACEN, Datadog, parceiros)
+- **Rel** — relacionamentos de alto nível entre sistemas
+
+**NÃO DEVE CONTER no contexto:**
+- ❌ `SystemQueue`, `SystemDb` — filas e databases são detalhes de container
+- ❌ `Enterprise_Boundary` com múltiplos sub-sistemas — o sistema é UMA caixa
+- ❌ `Enterprise_Boundary("Security Layer")` — segurança é UM sistema, não um boundary
+- ❌ Componentes Ory individuais (Oathkeeper, Kratos, Keto separados) — é UM "Ory Security Stack"
+- ❌ Monitoring/CloudWatch como System_Ext separado — Datadog já cobre observabilidade
+- ❌ Ory Hydra como System_Ext separado — já faz parte do "Ory Security Stack"
+
+**Exemplo correto de C4Context:**
+```
+C4Context
+    title PIX SPI - Content-Based Router [AWS]
+
+    Person(Pagador, "Pagador", "Correntista que inicia PIX")
+    Person(Recebedor, "Recebedor", "Beneficiario do pagamento PIX")
+
+    System(main_system, "PIX SPI Platform", "Roteia pagamentos PIX por tipo e prioridade", $sprite="...")
+
+    System(ory_stack, "Ory Security Stack", "Identity, OAuth2, Permissions, Zero Trust Proxy", $sprite="...")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego", $sprite="...")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics", $sprite="...")
+
+    System_Ext(BACEN_SPI, "BACEN SPI", "Sistema de Pagamentos Instantaneos")
+    System_Ext(Participante_Direto, "Participante Direto", "Instituicao com conta PI")
+    System_Ext(STR, "STR", "Sistema de Transferencia de Reservas")
+
+    Rel(Pagador, main_system, "Inicia pagamento PIX", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS")
+    Rel(main_system, BACEN_SPI, "Integra com SPI", "HTTPS/mTLS")
+
+    UpdateElementStyle(main_system, ...)
+    UpdateElementStyle(ory_stack, ...)
+    UpdateElementStyle(opa_engine, ...)
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+```
+
+### 2. C4Container — Expande o Sistema em Containers
+
+O diagrama de **container** abre o sistema principal e mostra seus containers internos:
+
+- **Person(s)** — mesmos do contexto
+- **Container_Boundary("Platform")** — boundary principal contendo:
+  - `Container` — serviços (API, processadores, handlers)
+  - `ContainerDb` — databases (relacional, NoSQL, cache)
+  - `ContainerQueue` — filas e tópicos de mensageria
+- **Container_Boundary("Security Layer")** — boundary com Ory Stack expandido:
+  - `Container(ory_oathkeeper, ...)` — proxy zero trust
+  - `Container(ory_kratos, ...)` — identity management
+  - `Container(ory_keto, ...)` — permissions
+  - `Container(opa_sidecar, ...)` — OPA sidecar
+  - `ContainerDb(identity_db, ...)`, `ContainerDb(keto_db, ...)`
+- **Container_Boundary("Observability Layer")** — boundary com Datadog:
+  - `Container(dd_agent, ...)`, `Container(dd_apm, ...)`, `Container(dd_logs, ...)`
+- **System_Ext** — sistemas externos
+
+### 3. C4Component — Detalha os Componentes Internos
+
+O diagrama de **componente** abre um container e mostra seus componentes internos (arquitetura hexagonal):
+
+- **Container** (externo) — API layer, database, queue (como referência)
+- **Container_Boundary** — boundary com Components internos:
+  - Componentes do padrão (ex: Route Controller, Content Inspector, Channel Dispatcher)
+  - Componentes de segurança (Identity Handler, Permission Checker, OPA Evaluator)
+  - Componentes de observabilidade (DD Tracer, Metrics Client, Log Enricher)
+- **Rel** — relacionamentos internos entre componentes
 
 ## Variações por Cenário (~10 por domínio/cloud/nível)
 
@@ -963,7 +1039,7 @@ O layout ELK requer Mermaid 9.4+ e o plugin `mermaid-layout-elk`. Em ambientes q
 
 ## Sintaxe C4 Mermaid Confirmada (via Context7)
 
-### C4Context
+### C4Context (alto nível — sem queues, databases, boundaries internas)
 ```
 ---
 config:
@@ -978,19 +1054,12 @@ config:
 ---
 C4Context
   title ...
-  Enterprise_Boundary(id, "label") {
-    Person(id, "name", "desc")
-    Person_Ext(id, "name", "desc")
-    System(id, "name", "desc", $sprite="img:url", $tags="cloud")
-    System_Ext(id, "name", "desc")
-    SystemDb(id, "name", "desc", $sprite="img:url")
-    SystemDb_Ext(id, "name", "desc")
-    SystemQueue(id, "name", "desc", $sprite="img:url")
-    SystemQueue_Ext(id, "name", "desc")
-  }
+  Person(id, "name", "desc")
+  System(id, "name", "desc", $sprite="img:url")
+  System_Ext(id, "name", "desc")
   Rel(from, to, "label", "tech")
-  BiRel(from, to, "label")
   UpdateElementStyle(id, $bgColor="color", $fontColor="color", $borderColor="color")
+  UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
 ### C4Container

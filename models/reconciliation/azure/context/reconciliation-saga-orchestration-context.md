@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via orquestrador central no contexto de reconciliacao financeira
 
 ## Componentes Principais
-- **Reconciliation Command Service** — Servico de comandos para reconciliacao financeira
-- **Saga Orchestration Handler** — Handler do padrao Saga Orchestration
-- **Reconciliation Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Reconciliation Platform** — sistema principal (Coordena transacoes distribuidas via orquestrador central no contexto de reconci)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

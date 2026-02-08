@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via orquestrador central no contexto de pipeline de dados e data lake
 
 ## Componentes Principais
-- **Data Pipeline Command Service** — Servico de comandos para pipeline de dados e data lake
-- **Saga Orchestration Handler** — Handler do padrao Saga Orchestration
-- **Data Pipeline Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **Data Pipeline Platform** — sistema principal (Coordena transacoes distribuidas via orquestrador central no contexto de pipelin)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

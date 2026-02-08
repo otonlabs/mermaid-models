@@ -17,10 +17,9 @@ Context
 Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto de gestao de tesouraria
 
 ## Componentes Principais
-- **Treasury Gateway** — Gateway principal para gestao de tesouraria
-- **Content-Based Router Engine** — Motor de content-based router para processamento
-- **Treasury Monitor** — Monitoramento e alertas de gestao de tesouraria
-- **Service Bus Queue Queue** — canal de mensagens para content-based-router
+- **Treasury Platform** — sistema principal (Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

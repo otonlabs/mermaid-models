@@ -17,10 +17,9 @@ Context
 Steps: validar conta, debitar pagador, enviar SPI, creditar recebedor, notificar
 
 ## Componentes Principais
-- **Payment Saga Orchestrator** — Coordena 5 steps do pagamento com compensacao
-- **Debit Service** — Debita conta do pagador com reserva atomica
-- **Credit Service** — Credita conta do recebedor apos confirmacao SPI
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **PIX SPI Platform** — sistema principal (Steps: validar conta, debitar pagador, enviar SPI, creditar recebedor, notificar)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

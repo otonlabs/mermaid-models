@@ -12,48 +12,28 @@ config:
 C4Context
     title Treasury com Strangler Fig [GCP]
 
-    Enterprise_Boundary(b0, "Treasury Platform") {
-        Person(Tesoureiro, "Tesoureiro", "Tesoureiro da instituicao")
-        Person(Operador_Mesa, "Operador Mesa", "Operador de mesa de cambio")
-        System(Treasury_Command_Service, "Treasury Command Service", "Servico de comandos para gestao de tesouraria", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        System(Strangler_Fig_Handler, "Strangler Fig Handler", "Handler do padrao Strangler Fig", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        System(Treasury_Query_Service, "Treasury Query Service", "Servico de consultas otimizadas", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        SystemDb(main_db, "Cloud SQL", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/GCP/svg/Databases/Cloud-SQL.svg")
-    }
+    Person(Tesoureiro, "Tesoureiro", "Tesoureiro da instituicao")
+    Person(Operador_Mesa, "Operador Mesa", "Operador de mesa de cambio")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Secret-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-    }
+    System(main_system, "Treasury Platform", "Migra incrementalmente de sistema legado para novo no contexto de gestao de tesouraria", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
 
     System_Ext(BACEN_STR, "BACEN STR", "Sistema de Transferencia de Reservas")
     System_Ext(Bloomberg_Terminal, "Bloomberg Terminal", "Terminal de dados de mercado")
     System_Ext(CETIP, "CETIP", "Central de custodia de titulos")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
-    System_Ext(monitoring, "Cloud Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
 
-    Rel(Tesoureiro, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, Treasury_Command_Service, "Roteia request autenticado", "HTTPS")
-    Rel(Treasury_Command_Service, Strangler_Fig_Handler, "Coordena com", "gRPC/Internal")
-    Rel(Strangler_Fig_Handler, main_db, "Persiste estado", "Cloud SQL")
-    Rel(Treasury_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(Treasury_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(Treasury_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(Treasury_Query_Service, monitoring, "Reporta metricas", "HTTPS")
-    Rel(Treasury_Command_Service, BACEN_STR, "Integra com", "HTTPS/mTLS")
-    Rel(Treasury_Query_Service, Bloomberg_Terminal, "Reporta para", "HTTPS")
+    Rel(Tesoureiro, main_system, "Usa", "HTTPS")
+    Rel(Operador_Mesa, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, BACEN_STR, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, Bloomberg_Terminal, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(Treasury_Command_Service, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(Strangler_Fig_Handler, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(Treasury_Query_Service, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

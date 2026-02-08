@@ -12,48 +12,28 @@ config:
 C4Context
     title Open Banking com Publish-Subscribe [GCP]
 
-    Enterprise_Boundary(b0, "Open Banking Platform") {
-        Person(Cliente, "Cliente", "Titular dos dados financeiros")
-        Person(TPP_Developer, "TPP Developer", "Desenvolvedor de aplicacao terceira")
-        System(Open_Banking_Gateway, "Open Banking Gateway", "Gateway principal para open finance brasil", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        System(Publish_Subscribe_Engine, "Publish-Subscribe Engine", "Motor de publish-subscribe para processamento", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        System(Open_Banking_Monitor, "Open Banking Monitor", "Monitoramento e alertas de open finance brasil", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
-        SystemQueue(msg_queue, "Cloud Tasks Queue", "Canal de mensagens para pub-sub", $sprite="img:https://icon.icepanel.io/GCP/svg/App-Integration/Cloud-Tasks.svg")
-    }
+    Person(Cliente, "Cliente", "Titular dos dados financeiros")
+    Person(TPP_Developer, "TPP Developer", "Desenvolvedor de aplicacao terceira")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Secret-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
-    }
+    System(main_system, "Open Banking Platform", "Broadcast de mensagens para multiplos assinantes aplicado ao contexto de open finance brasil", $sprite="img:https://icon.icepanel.io/GCP/svg/Compute/Cloud-Run.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/GCP/svg/Security/Cloud-IAM.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
 
     System_Ext(Open_Finance_Directory, "Open Finance Directory", "Diretorio de participantes")
     System_Ext(Instituicao_Receptora, "Instituicao Receptora", "ITP que recebe dados")
     System_Ext(BACEN, "BACEN", "Regulador Open Finance")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/GCP/svg/API-Management/Apigee-API-Management.svg")
-    System_Ext(monitoring, "Cloud Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/GCP/svg/Operations/Cloud-Monitoring.svg")
 
-    Rel(Cliente, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, Open_Banking_Gateway, "Roteia request autenticado", "HTTPS")
-    Rel(Open_Banking_Gateway, msg_queue, "Envia mensagens", "Cloud Tasks")
-    Rel(msg_queue, Publish_Subscribe_Engine, "Entrega para processamento", "Async")
-    Rel(Open_Banking_Gateway, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(Open_Banking_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(Open_Banking_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(Open_Banking_Monitor, monitoring, "Reporta metricas", "HTTPS")
-    Rel(Open_Banking_Gateway, Open_Finance_Directory, "Integra com", "HTTPS/mTLS")
-    Rel(Open_Banking_Monitor, Instituicao_Receptora, "Reporta para", "HTTPS")
+    Rel(Cliente, main_system, "Usa", "HTTPS")
+    Rel(TPP_Developer, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, Open_Finance_Directory, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, Instituicao_Receptora, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(Open_Banking_Gateway, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(Publish_Subscribe_Engine, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(Open_Banking_Monitor, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
-    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
+    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#4285F4", $borderColor="#1A73E8")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

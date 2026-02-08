@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de pipeline de dados e data lake
 
 ## Componentes Principais
-- **Data Pipeline Command Service** — Servico de comandos para pipeline de dados e data lake
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **Data Pipeline Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Data Pipeline Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de pipeline de da)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

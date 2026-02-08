@@ -17,10 +17,9 @@ Context
 Historico completo e imutavel de cada caso MED para auditoria BACEN
 
 ## Componentes Principais
-- **MED Command Service** — Processa comandos de abertura, analise e devolucao
-- **MED Event Store** — Historico imutavel de eventos do caso MED
-- **MED Query View** — Consulta de status e historico de casos MED
-- **Cloud SQL** — persistência principal do domínio
+- **PIX MED Platform** — sistema principal (Historico completo e imutavel de cada caso MED para auditoria BACEN)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

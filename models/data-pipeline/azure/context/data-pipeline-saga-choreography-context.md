@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via coreografia de eventos no contexto de pipeline de dados e data lake
 
 ## Componentes Principais
-- **Data Pipeline Command Service** — Servico de comandos para pipeline de dados e data lake
-- **Saga Choreography Handler** — Handler do padrao Saga Choreography
-- **Data Pipeline Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **Data Pipeline Platform** — sistema principal (Coordena transacoes distribuidas via coreografia de eventos no contexto de pipel)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

@@ -17,10 +17,9 @@ Context
 Encaminha mensagens nao processaveis para canal de dead letter aplicado ao contexto de plataforma de seguros
 
 ## Componentes Principais
-- **Insurance Gateway** — Gateway principal para plataforma de seguros
-- **Dead Letter Channel Engine** — Motor de dead letter channel para processamento
-- **Insurance Monitor** — Monitoramento e alertas de plataforma de seguros
-- **Service Bus Queue Queue** — canal de mensagens para dead-letter
+- **Insurance Platform** — sistema principal (Encaminha mensagens nao processaveis para canal de dead letter aplicado ao conte)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

@@ -17,10 +17,9 @@ Context
 Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto de plataforma de seguros
 
 ## Componentes Principais
-- **Insurance Gateway** — Gateway principal para plataforma de seguros
-- **Content-Based Router Engine** — Motor de content-based router para processamento
-- **Insurance Monitor** — Monitoramento e alertas de plataforma de seguros
-- **Cloud Tasks Queue** — canal de mensagens para content-based-router
+- **Insurance Platform** — sistema principal (Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

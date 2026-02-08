@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de processamento de cartoes
 
 ## Componentes Principais
-- **Cards Gateway** — Gateway principal para processamento de cartoes
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Cards Monitor** — Monitoramento e alertas de processamento de cartoes
-- **OCI Queue Queue** — canal de mensagens para pub-sub
+- **Cards Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de process)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

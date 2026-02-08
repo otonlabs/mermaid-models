@@ -12,48 +12,28 @@ config:
 C4Context
     title Investments com Publish-Subscribe [AWS]
 
-    Enterprise_Boundary(b0, "Investments Platform") {
-        Person(Investidor, "Investidor", "Cliente investidor")
-        Person(Assessor, "Assessor", "Assessor de investimentos")
-        System(Investments_Gateway, "Investments Gateway", "Gateway principal para investimentos e patrimonio", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(Publish_Subscribe_Engine, "Publish-Subscribe Engine", "Motor de publish-subscribe para processamento", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(Investments_Monitor, "Investments Monitor", "Monitoramento e alertas de investimentos e patrimonio", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        SystemQueue(msg_queue, "SQS Queue", "Canal de mensagens para pub-sub", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
-    }
+    Person(Investidor, "Investidor", "Cliente investidor")
+    Person(Assessor, "Assessor", "Assessor de investimentos")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
-    }
+    System(main_system, "Investments Platform", "Broadcast de mensagens para multiplos assinantes aplicado ao contexto de investimentos e patrimonio", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
     System_Ext(B3_Bolsa, "B3 Bolsa", "Bolsa de Valores do Brasil")
     System_Ext(CVM, "CVM", "Comissao de Valores Mobiliarios")
     System_Ext(Custodiante, "Custodiante", "Custodia de ativos")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
-    Rel(Investidor, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, Investments_Gateway, "Roteia request autenticado", "HTTPS")
-    Rel(Investments_Gateway, msg_queue, "Envia mensagens", "SQS")
-    Rel(msg_queue, Publish_Subscribe_Engine, "Entrega para processamento", "Async")
-    Rel(Investments_Gateway, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(Investments_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(Investments_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(Investments_Monitor, monitoring, "Reporta metricas", "HTTPS")
-    Rel(Investments_Gateway, B3_Bolsa, "Integra com", "HTTPS/mTLS")
-    Rel(Investments_Monitor, CVM, "Reporta para", "HTTPS")
+    Rel(Investidor, main_system, "Usa", "HTTPS")
+    Rel(Assessor, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, B3_Bolsa, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, CVM, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(Investments_Gateway, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(Publish_Subscribe_Engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(Investments_Monitor, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(msg_queue, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_system, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_stack, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

@@ -17,10 +17,9 @@ Context
 Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto de seguranca e gestao de identidade
 
 ## Componentes Principais
-- **Security IAM Gateway** — Gateway principal para seguranca e gestao de identidade
-- **Content-Based Router Engine** — Motor de content-based router para processamento
-- **Security IAM Monitor** — Monitoramento e alertas de seguranca e gestao de identidade
-- **SQS Queue** — canal de mensagens para content-based-router
+- **Security IAM Platform** — sistema principal (Roteia mensagens para canais diferentes baseado no conteudo aplicado ao contexto)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

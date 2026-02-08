@@ -17,10 +17,9 @@ Context
 Previne falhas em cascata com circuit breaker pattern no contexto de seguranca e gestao de identidade
 
 ## Componentes Principais
-- **Security IAM Command Service** — Servico de comandos para seguranca e gestao de identidade
-- **Circuit Breaker Handler** — Handler do padrao Circuit Breaker
-- **Security IAM Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **Security IAM Platform** — sistema principal (Previne falhas em cascata com circuit breaker pattern no contexto de seguranca e)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

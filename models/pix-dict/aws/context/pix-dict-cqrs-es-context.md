@@ -17,10 +17,9 @@ Context
 Separacao de comandos de registro/alteracao e consultas de chave com historico completo
 
 ## Componentes Principais
-- **Command Handler** — Processa comandos de registro, alteracao e exclusao
-- **Event Store** — Armazena historico imutavel de todas as operacoes de chave
-- **Query Service** — Consultas otimizadas de chaves por CPF, telefone, email
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **PIX DICT Platform** — sistema principal (Separacao de comandos de registro/alteracao e consultas de chave com historico c)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

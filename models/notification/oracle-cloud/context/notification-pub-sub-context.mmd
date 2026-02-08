@@ -12,48 +12,28 @@ config:
 C4Context
     title Notification com Publish-Subscribe [Oracle Cloud]
 
-    Enterprise_Boundary(b0, "Notification Platform") {
-        Person(End_User, "End User", "Usuario que recebe notificacoes")
-        Person(Marketing_Manager, "Marketing Manager", "Gestor de campanhas")
-        System(Notification_Gateway, "Notification Gateway", "Gateway principal para servicos de notificacao", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
-        System(Publish_Subscribe_Engine, "Publish-Subscribe Engine", "Motor de publish-subscribe para processamento", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
-        System(Notification_Monitor, "Notification Monitor", "Monitoramento e alertas de servicos de notificacao", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
-        SystemQueue(msg_queue, "OCI Queue Queue", "Canal de mensagens para pub-sub", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Queue.svg")
-    }
+    Person(End_User, "End User", "Usuario que recebe notificacoes")
+    Person(Marketing_Manager, "Marketing Manager", "Gestor de campanhas")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
-    }
+    System(main_system, "Notification Platform", "Broadcast de mensagens para multiplos assinantes aplicado ao contexto de servicos de notificacao", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
 
     System_Ext(Email_Provider_SES, "Email Provider SES", "Servico de email")
     System_Ext(SMS_Provider, "SMS Provider", "Provedor de SMS")
     System_Ext(Push_FCM, "Push FCM", "Firebase Cloud Messaging")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
-    System_Ext(monitoring, "OCI Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
 
-    Rel(End_User, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, Notification_Gateway, "Roteia request autenticado", "HTTPS")
-    Rel(Notification_Gateway, msg_queue, "Envia mensagens", "OCI Queue")
-    Rel(msg_queue, Publish_Subscribe_Engine, "Entrega para processamento", "Async")
-    Rel(Notification_Gateway, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(Notification_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(Notification_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(Notification_Monitor, monitoring, "Reporta metricas", "HTTPS")
-    Rel(Notification_Gateway, Email_Provider_SES, "Integra com", "HTTPS/mTLS")
-    Rel(Notification_Monitor, SMS_Provider, "Reporta para", "HTTPS")
+    Rel(End_User, main_system, "Usa", "HTTPS")
+    Rel(Marketing_Manager, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, Email_Provider_SES, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, SMS_Provider, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(Notification_Gateway, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(Publish_Subscribe_Engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(Notification_Monitor, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(msg_queue, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

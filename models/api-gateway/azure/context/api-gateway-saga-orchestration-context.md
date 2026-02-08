@@ -17,10 +17,9 @@ Context
 Coordena transacoes distribuidas via orquestrador central no contexto de api gateway e hub de integracao
 
 ## Componentes Principais
-- **API Gateway Command Service** — Servico de comandos para api gateway e hub de integracao
-- **Saga Orchestration Handler** — Handler do padrao Saga Orchestration
-- **API Gateway Query Service** — Servico de consultas otimizadas
-- **Azure SQL Database** — persistência principal do domínio
+- **API Gateway Platform** — sistema principal (Coordena transacoes distribuidas via orquestrador central no contexto de api gat)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

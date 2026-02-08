@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de open finance brasil
 
 ## Componentes Principais
-- **Open Banking Gateway** — Gateway principal para open finance brasil
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Open Banking Monitor** — Monitoramento e alertas de open finance brasil
-- **Cloud Tasks Queue** — canal de mensagens para splitter-aggregator
+- **Open Banking Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de open finan)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

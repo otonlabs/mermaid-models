@@ -17,10 +17,9 @@ Context
 Split de caso em sub-analises paralelas e agregacao de score final
 
 ## Componentes Principais
-- **Case Splitter** — Divide caso em analise de fraude, saldo e historico
-- **Fraud Analyzer** — Analisa padroes de fraude do recebedor
-- **Score Aggregator** — Agrega scores parciais em decisao final de devolucao
-- **SQS Queue** — canal de mensagens para splitter-aggregator
+- **PIX MED Platform** — sistema principal (Split de caso em sub-analises paralelas e agregacao de score final)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

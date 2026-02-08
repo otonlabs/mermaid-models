@@ -12,48 +12,28 @@ config:
 C4Context
     title Broadcast de Bloqueio Cautelar via Pub-Sub [AWS]
 
-    Enterprise_Boundary(b0, "PIX MED Platform") {
-        Person(Vitima, "Vitima", "Correntista vitima de fraude ou falha operacional")
-        Person(Analista_Fraude, "Analista Fraude", "Analisa casos MED e determina bloqueio")
-        System(Block_Publisher, "Block Publisher", "Publica evento de bloqueio cautelar de recursos", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(Channel_Blocker, "Channel Blocker", "Bloqueia canais PIX, TED e saque do recebedor", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(Notification_Service, "Notification Service", "Notifica recebedor sobre bloqueio e prazo de defesa", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        SystemQueue(msg_queue, "SQS Queue", "Canal de mensagens para pub-sub", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
-    }
+    Person(Vitima, "Vitima", "Correntista vitima de fraude ou falha operacional")
+    Person(Analista_Fraude, "Analista Fraude", "Analisa casos MED e determina bloqueio")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
-    }
+    System(main_system, "PIX MED Platform", "Notificacao de bloqueio cautelar para todos os canais do recebedor", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
     System_Ext(BACEN_MED, "BACEN MED", "API MED do Banco Central para devolucoes especiais")
     System_Ext(PSP_Recebedor, "PSP Recebedor", "PSP que recebeu o PIX objeto de devolucao")
     System_Ext(Anti_Fraud_System, "Anti-Fraud System", "Sistema de deteccao de fraude")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
-    Rel(Vitima, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, Block_Publisher, "Roteia request autenticado", "HTTPS")
-    Rel(Block_Publisher, msg_queue, "Envia mensagens", "SQS")
-    Rel(msg_queue, Channel_Blocker, "Entrega para processamento", "Async")
-    Rel(Block_Publisher, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(Block_Publisher, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(Block_Publisher, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(Notification_Service, monitoring, "Reporta metricas", "HTTPS")
-    Rel(Block_Publisher, BACEN_MED, "Integra com", "HTTPS/mTLS")
-    Rel(Notification_Service, PSP_Recebedor, "Reporta para", "HTTPS")
+    Rel(Vitima, main_system, "Usa", "HTTPS")
+    Rel(Analista_Fraude, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, BACEN_MED, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, PSP_Recebedor, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(Block_Publisher, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(Channel_Blocker, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(Notification_Service, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(msg_queue, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_system, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_stack, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

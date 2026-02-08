@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de credito e emprestimos
 
 ## Componentes Principais
-- **Credit Lending Gateway** — Gateway principal para credito e emprestimos
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **Credit Lending Monitor** — Monitoramento e alertas de credito e emprestimos
-- **Service Bus Queue Queue** — canal de mensagens para splitter-aggregator
+- **Credit Lending Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de credito e )
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

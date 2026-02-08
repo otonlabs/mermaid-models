@@ -12,48 +12,28 @@ config:
 C4Context
     title STR com Saga Orchestration [Oracle Cloud]
 
-    Enterprise_Boundary(b0, "STR Platform") {
-        Person(Operador_Tesouraria, "Operador Tesouraria", "Opera mesa de tesouraria")
-        Person(Gerente_Liquidez, "Gerente Liquidez", "Gerencia posicao de liquidez")
-        System(STR_Command_Service, "STR Command Service", "Servico de comandos para sistema de transferencia de reservas", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
-        System(Saga_Orchestration_Handler, "Saga Orchestration Handler", "Handler do padrao Saga Orchestration", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
-        System(STR_Query_Service, "STR Query Service", "Servico de consultas otimizadas", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
-        SystemDb(main_db, "Autonomous Database", "Persistencia principal do dominio", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/Autonomous-Database.svg")
-    }
+    Person(Operador_Tesouraria, "Operador Tesouraria", "Opera mesa de tesouraria")
+    Person(Gerente_Liquidez, "Gerente Liquidez", "Gerencia posicao de liquidez")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
-    }
+    System(main_system, "STR Platform", "Coordena transacoes distribuidas via orquestrador central no contexto de sistema de transferencia de reservas", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/Container-Engine-for-Kubernetes.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
 
     System_Ext(BACEN_STR, "BACEN STR", "Sistema de Transferencia de Reservas")
     System_Ext(Banco_Participante, "Banco Participante", "Banco com conta reserva")
     System_Ext(Camara_LBTR, "Camara LBTR", "Liquidacao bruta em tempo real")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
-    System_Ext(monitoring, "OCI Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
 
-    Rel(Operador_Tesouraria, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, STR_Command_Service, "Roteia request autenticado", "HTTPS")
-    Rel(STR_Command_Service, Saga_Orchestration_Handler, "Coordena com", "gRPC/Internal")
-    Rel(Saga_Orchestration_Handler, main_db, "Persiste estado", "Autonomous Database")
-    Rel(STR_Command_Service, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(STR_Command_Service, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(STR_Command_Service, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(STR_Query_Service, monitoring, "Reporta metricas", "HTTPS")
-    Rel(STR_Command_Service, BACEN_STR, "Integra com", "HTTPS/mTLS")
-    Rel(STR_Query_Service, Banco_Participante, "Reporta para", "HTTPS")
+    Rel(Operador_Tesouraria, main_system, "Usa", "HTTPS")
+    Rel(Gerente_Liquidez, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, BACEN_STR, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, Banco_Participante, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(STR_Command_Service, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(Saga_Orchestration_Handler, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(STR_Query_Service, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(main_db, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
-    UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(main_system, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateElementStyle(ory_stack, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

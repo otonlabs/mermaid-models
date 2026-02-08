@@ -17,10 +17,9 @@ Context
 Encaminha mensagens nao processaveis para canal de dead letter aplicado ao contexto de servicos de notificacao
 
 ## Componentes Principais
-- **Notification Gateway** — Gateway principal para servicos de notificacao
-- **Dead Letter Channel Engine** — Motor de dead letter channel para processamento
-- **Notification Monitor** — Monitoramento e alertas de servicos de notificacao
-- **Service Bus Queue Queue** — canal de mensagens para dead-letter
+- **Notification Platform** — sistema principal (Encaminha mensagens nao processaveis para canal de dead letter aplicado ao conte)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

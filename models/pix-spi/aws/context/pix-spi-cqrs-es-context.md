@@ -17,10 +17,9 @@ Context
 Write path otimizado para insercao e read path com projecoes para consulta de status
 
 ## Componentes Principais
-- **Payment Command Service** — Recebe e valida comandos de pagamento PIX
-- **Event Store** — Armazena eventos imutaveis de cada transacao PIX
-- **Status Query Service** — Projecoes otimizadas para consulta de status em real-time
-- **Aurora PostgreSQL** — persistência principal do domínio
+- **PIX SPI Platform** — sistema principal (Write path otimizado para insercao e read path com projecoes para consulta de st)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

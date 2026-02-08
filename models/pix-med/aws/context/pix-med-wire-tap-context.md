@@ -17,10 +17,9 @@ Context
 Registro detalhado de cada step do MED para conformidade regulatoria
 
 ## Componentes Principais
-- **MED Flow Gateway** — Gateway central do fluxo MED
-- **Regulatory Tap** — Captura evidencias de cada decisao para auditoria BACEN
-- **Evidence Store** — Armazena evidencias com imutabilidade e timestamp
-- **SQS Queue** — canal de mensagens para wire-tap
+- **PIX MED Platform** — sistema principal (Registro detalhado de cada step do MED para conformidade regulatoria)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

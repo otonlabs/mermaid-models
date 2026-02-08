@@ -12,48 +12,28 @@ config:
 C4Context
     title Reconciliation com Dead Letter Channel [AWS]
 
-    Enterprise_Boundary(b0, "Reconciliation Platform") {
-        Person(Analista_Conciliacao, "Analista Conciliacao", "Analista de reconciliacao")
-        Person(Auditor, "Auditor", "Auditor financeiro")
-        System(Reconciliation_Gateway, "Reconciliation Gateway", "Gateway principal para reconciliacao financeira", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(Dead_Letter_Channel_Engine, "Dead Letter Channel Engine", "Motor de dead letter channel para processamento", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        System(Reconciliation_Monitor, "Reconciliation Monitor", "Monitoramento e alertas de reconciliacao financeira", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        SystemQueue(msg_queue, "SQS Queue", "Canal de mensagens para dead-letter", $sprite="img:https://icon.icepanel.io/AWS/svg/App-Integration/Simple-Queue-Service.svg")
-    }
+    Person(Analista_Conciliacao, "Analista Conciliacao", "Analista de reconciliacao")
+    Person(Auditor, "Auditor", "Auditor financeiro")
 
-    Enterprise_Boundary(sec0, "Security Layer") {
-        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
-        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
-    }
+    System(main_system, "Reconciliation Platform", "Encaminha mensagens nao processaveis para canal de dead letter aplicado ao contexto de reconciliacao financeira", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
+
+    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
     System_Ext(Core_Banking, "Core Banking", "Sistema core de contas")
     System_Ext(Payment_Processor, "Payment Processor", "Processador de pagamentos")
     System_Ext(External_Statement, "External Statement", "Extratos de contrapartes")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/AWS/svg/Networking-Content-Delivery/API-Gateway.svg")
-    System_Ext(monitoring, "CloudWatch", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
 
-    Rel(Analista_Conciliacao, ory_oathkeeper, "Acessa via proxy", "HTTPS")
-    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
-    Rel(ory_oathkeeper, Reconciliation_Gateway, "Roteia request autenticado", "HTTPS")
-    Rel(Reconciliation_Gateway, msg_queue, "Envia mensagens", "SQS")
-    Rel(msg_queue, Dead_Letter_Channel_Engine, "Entrega para processamento", "Async")
-    Rel(Reconciliation_Gateway, ory_keto, "Verifica permissao", "HTTPS")
-    Rel(Reconciliation_Gateway, opa_engine, "Avalia policy de negocio", "HTTPS")
-    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")
-    Rel(Reconciliation_Gateway, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")
-    Rel(Reconciliation_Monitor, monitoring, "Reporta metricas", "HTTPS")
-    Rel(Reconciliation_Gateway, Core_Banking, "Integra com", "HTTPS/mTLS")
-    Rel(Reconciliation_Monitor, Payment_Processor, "Reporta para", "HTTPS")
+    Rel(Analista_Conciliacao, main_system, "Usa", "HTTPS")
+    Rel(Auditor, main_system, "Gerencia", "HTTPS")
+    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")
+    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")
+    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")
+    Rel(main_system, Core_Banking, "Integra com", "HTTPS/mTLS")
+    Rel(main_system, Payment_Processor, "Reporta para", "HTTPS")
 
-    UpdateElementStyle(Reconciliation_Gateway, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(Dead_Letter_Channel_Engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(Reconciliation_Monitor, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(msg_queue, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_oathkeeper, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_kratos, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
-    UpdateElementStyle(ory_keto, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(main_system, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateElementStyle(ory_stack, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateElementStyle(opa_engine, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

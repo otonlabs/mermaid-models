@@ -17,10 +17,9 @@ Context
 Divide mensagens compostas e agrega respostas aplicado ao contexto de rede do sistema financeiro nacional
 
 ## Componentes Principais
-- **RSFN Connect Gateway** — Gateway principal para rede do sistema financeiro nacional
-- **Splitter-Aggregator Engine** — Motor de splitter-aggregator para processamento
-- **RSFN Connect Monitor** — Monitoramento e alertas de rede do sistema financeiro nacional
-- **Service Bus Queue Queue** — canal de mensagens para splitter-aggregator
+- **RSFN Connect Platform** — sistema principal (Divide mensagens compostas e agrega respostas aplicado ao contexto de rede do si)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

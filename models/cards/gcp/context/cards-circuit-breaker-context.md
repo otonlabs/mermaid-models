@@ -17,10 +17,9 @@ Context
 Previne falhas em cascata com circuit breaker pattern no contexto de processamento de cartoes
 
 ## Componentes Principais
-- **Cards Command Service** — Servico de comandos para processamento de cartoes
-- **Circuit Breaker Handler** — Handler do padrao Circuit Breaker
-- **Cards Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **Cards Platform** — sistema principal (Previne falhas em cascata com circuit breaker pattern no contexto de processamen)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

@@ -491,12 +491,9 @@ def gen_doc(mmd_path, title, domain, cloud, c4_level, scenario, is_eip, stack=No
 
     L.append("## Componentes Principais")
     if c4_level == "Context":
-        for s_name, s_desc in scenario.get("systems", [])[:3]:
-            L.append(f"- **{s_name}** — {s_desc}")
-        if is_eip:
-            L.append(f"- **{cloud_svc(cloud, 'queue')[0]} Queue** — canal de mensagens para {pattern}")
-        else:
-            L.append(f"- **{cloud_svc(cloud, 'db_rel')[0]}** — persistência principal do domínio")
+        L.append(f"- **{domain['label']} Platform** — sistema principal ({scenario.get('focus', 'plataforma do dominio')[:80]})")
+        L.append(f"- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy")
+        L.append(f"- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance")
     elif c4_level == "Container":
         L.append(f"- **{domain['label']} Service** — serviço principal rodando em {cloud_svc(cloud, 'compute')[0]}")
         if is_eip:
@@ -550,76 +547,54 @@ def gen_doc(mmd_path, title, domain, cloud, c4_level, scenario, is_eip, stack=No
 # ═══════════════════════════════════════════════════════════════════
 
 def gen_context(domain_key, domain, cloud, scenario, is_eip):
+    """Generate C4 Context diagram — high-level conceptual view.
+
+    Shows only: Persons, ONE main System, cross-cutting Systems (Ory Stack,
+    OPA), System_Ext (Datadog, domain externals). No queues, databases,
+    boundaries, or individual Ory components.
+    """
     c = CLOUDS[cloud]
     L = [ELK_FRONTMATTER, "C4Context"]
     L.append(f'    title {scenario["title"]} [{c["label"]}]')
     L.append("")
 
-    L.append(f'    Enterprise_Boundary(b0, "{domain["label"]} Platform") {{')
+    # Persons
     for p_name, p_desc in domain["persons"][:2]:
-        L.append(f'        Person({sid(p_name)}, "{p_name}", "{p_desc}")')
-
-    styled = []
-    systems = scenario.get("systems", [])
-    for s_name, s_desc in systems[:3]:
-        s_id = sid(s_name)
-        svc_name, svc_icon = cloud_svc(cloud, "compute")
-        L.append(f'        System({s_id}, "{s_name}", "{s_desc}"{sprite(cloud, svc_icon)})')
-        styled.append(s_id)
-
-    # Add queue/db based on pattern type
-    if is_eip:
-        q_name, q_icon = cloud_svc(cloud, "queue")
-        L.append(f'        SystemQueue(msg_queue, "{q_name} Queue", "Canal de mensagens para {scenario["pattern"]}"{sprite(cloud, q_icon)})')
-        styled.append("msg_queue")
-    else:
-        db_name, db_icon = cloud_svc(cloud, "db_rel")
-        L.append(f'        SystemDb(main_db, "{db_name}", "Persistencia principal do dominio"{sprite(cloud, db_icon)})')
-        styled.append("main_db")
-    L.append("    }")
+        L.append(f'    Person({sid(p_name)}, "{p_name}", "{p_desc}")')
     L.append("")
 
-    # Security layer - Ory Stack + OPA
-    L.append(f'    Enterprise_Boundary(sec0, "Security Layer") {{')
-    L.append(f'        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy"{sprite(cloud, cloud_svc(cloud, "api_gw")[1])})')
-    L.append(f'        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA"{sprite(cloud, cloud_svc(cloud, "iam")[1])})')
-    L.append(f'        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples"{sprite(cloud, cloud_svc(cloud, "secret")[1])})')
-    L.append(f'        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance"{sprite(cloud, cloud_svc(cloud, "waf")[1])})')
-    L.append("    }")
-    styled.extend(["ory_oathkeeper", "ory_kratos", "ory_keto", "opa_engine"])
+    # Main system — ONE box representing the entire platform
+    compute_name, compute_icon = cloud_svc(cloud, "compute")
+    L.append(f'    System(main_system, "{domain["label"]} Platform", "{scenario["focus"]}"{sprite(cloud, compute_icon)})')
     L.append("")
 
+    # Cross-cutting systems — ONE box each (not expanded)
+    L.append(f'    System(ory_stack, "Ory Security Stack", "Identity (Kratos), OAuth2 (Hydra), Permissions (Keto), Zero Trust (Oathkeeper)"{sprite(cloud, cloud_svc(cloud, "iam")[1])})')
+    L.append(f'    System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance"{sprite(cloud, cloud_svc(cloud, "waf")[1])})')
+    L.append(f'    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM"{sprite(cloud, cloud_svc(cloud, "monitoring")[1])})')
+    L.append("")
+
+    # External systems (domain-specific)
     for e_name, e_desc in domain["ext_systems"][:3]:
         L.append(f'    System_Ext({sid(e_name)}, "{e_name}", "{e_desc}")')
-    L.append(f'    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)"{sprite(cloud, cloud_svc(cloud, "api_gw")[1])})')
-
-    mon_name, mon_icon = cloud_svc(cloud, "monitoring")
-    L.append(f'    System_Ext(monitoring, "{mon_name}", "Monitoramento e alertas"{sprite(cloud, mon_icon)})')
-    L.append(f'    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM"{sprite(cloud, mon_icon)})')
     L.append("")
 
-    # Relationships
-    if domain["persons"] and systems:
-        L.append(f'    Rel({sid(domain["persons"][0][0])}, ory_oathkeeper, "Acessa via proxy", "HTTPS")')
-        L.append(f'    Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")')
-        L.append(f'    Rel(ory_oathkeeper, {sid(systems[0][0])}, "Roteia request autenticado", "HTTPS")')
-    if len(systems) >= 2:
-        if is_eip:
-            L.append(f'    Rel({sid(systems[0][0])}, msg_queue, "Envia mensagens", "{cloud_svc(cloud, "queue")[0]}")')
-            L.append(f'    Rel(msg_queue, {sid(systems[1][0])}, "Entrega para processamento", "Async")')
-        else:
-            L.append(f'    Rel({sid(systems[0][0])}, {sid(systems[1][0])}, "Coordena com", "gRPC/Internal")')
-            L.append(f'    Rel({sid(systems[1][0])}, main_db, "Persiste estado", "{cloud_svc(cloud, "db_rel")[0]}")')
-    L.append(f'    Rel({sid(systems[0][0])}, ory_keto, "Verifica permissao", "HTTPS")')
-    L.append(f'    Rel({sid(systems[0][0])}, opa_engine, "Avalia policy de negocio", "HTTPS")')
-    L.append(f'    Rel(ory_kratos, ory_hydra, "Emite tokens OAuth2/OIDC", "HTTPS")')
-    L.append(f'    Rel({sid(systems[0][0])}, datadog_platform, "Envia traces, metricas e logs", "HTTPS/Agent")')
-    if len(systems) >= 3:
-        L.append(f'    Rel({sid(systems[2][0])}, monitoring, "Reporta metricas", "HTTPS")')
+    styled = ["main_system", "ory_stack", "opa_engine"]
+
+    # Relationships — high-level, conceptual
+    if domain["persons"]:
+        L.append(f'    Rel({sid(domain["persons"][0][0])}, main_system, "Usa", "HTTPS")')
+    if len(domain["persons"]) >= 2:
+        L.append(f'    Rel({sid(domain["persons"][1][0])}, main_system, "Gerencia", "HTTPS")')
+
+    L.append(f'    Rel(main_system, ory_stack, "Autentica e autoriza via", "HTTPS/gRPC")')
+    L.append(f'    Rel(main_system, opa_engine, "Avalia policies de negocio", "REST")')
+    L.append(f'    Rel(main_system, datadog_platform, "Envia telemetria", "HTTPS/Agent")')
+
     if domain["ext_systems"]:
-        L.append(f'    Rel({sid(systems[0][0])}, {sid(domain["ext_systems"][0][0])}, "Integra com", "HTTPS/mTLS")')
+        L.append(f'    Rel(main_system, {sid(domain["ext_systems"][0][0])}, "Integra com", "HTTPS/mTLS")')
     if len(domain["ext_systems"]) >= 2:
-        L.append(f'    Rel({sid(systems[-1][0])}, {sid(domain["ext_systems"][1][0])}, "Reporta para", "HTTPS")')
+        L.append(f'    Rel(main_system, {sid(domain["ext_systems"][1][0])}, "Reporta para", "HTTPS")')
 
     L.append("")
     L.extend(style_lines(cloud, styled))

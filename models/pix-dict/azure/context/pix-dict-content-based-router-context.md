@@ -17,10 +17,9 @@ Context
 Roteamento de registros EVP, CPF, CNPJ, email e telefone para processadores especializados
 
 ## Componentes Principais
-- **Key Router** — Roteia requisicoes de registro por tipo de chave
-- **EVP Processor** — Processa chaves aleatórias EVP com UUID
-- **CPF CNPJ Processor** — Valida e registra chaves CPF/CNPJ com Receita Federal
-- **Service Bus Queue Queue** — canal de mensagens para content-based-router
+- **PIX DICT Platform** — sistema principal (Roteamento de registros EVP, CPF, CNPJ, email e telefone para processadores espe)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

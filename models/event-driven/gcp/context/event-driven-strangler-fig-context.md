@@ -17,10 +17,9 @@ Context
 Migra incrementalmente de sistema legado para novo no contexto de arquitetura event-driven
 
 ## Componentes Principais
-- **Event Driven Command Service** — Servico de comandos para arquitetura event-driven
-- **Strangler Fig Handler** — Handler do padrao Strangler Fig
-- **Event Driven Query Service** — Servico de consultas otimizadas
-- **Cloud SQL** — persistência principal do domínio
+- **Event Driven Platform** — sistema principal (Migra incrementalmente de sistema legado para novo no contexto de arquitetura ev)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

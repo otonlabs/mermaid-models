@@ -17,10 +17,9 @@ Context
 Separa modelos de leitura e escrita com estado baseado em eventos no contexto de sistema de transferencia de reservas
 
 ## Componentes Principais
-- **STR Command Service** — Servico de comandos para sistema de transferencia de reservas
-- **CQRS + Event Sourcing Handler** — Handler do padrao CQRS + Event Sourcing
-- **STR Query Service** — Servico de consultas otimizadas
-- **Autonomous Database** — persistência principal do domínio
+- **STR Platform** — sistema principal (Separa modelos de leitura e escrita com estado baseado em eventos no contexto de)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

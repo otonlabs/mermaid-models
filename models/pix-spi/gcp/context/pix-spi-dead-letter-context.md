@@ -17,10 +17,9 @@ Context
 Tratamento de rejeicoes do SPI com retry automatico e escalacao
 
 ## Componentes Principais
-- **SPI Sender** — Envia mensagens de pagamento para o SPI BACEN
-- **Rejection Handler** — Processa rejeicoes com logica de retry diferenciada
-- **Escalation Service** — Escalona pagamentos que falharam apos retries
-- **Cloud Tasks Queue** — canal de mensagens para dead-letter
+- **PIX SPI Platform** — sistema principal (Tratamento de rejeicoes do SPI com retry automatico e escalacao)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

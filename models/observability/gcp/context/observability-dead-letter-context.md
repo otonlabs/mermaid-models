@@ -17,10 +17,9 @@ Context
 Encaminha mensagens nao processaveis para canal de dead letter aplicado ao contexto de observabilidade e monitoramento
 
 ## Componentes Principais
-- **Observability Gateway** — Gateway principal para observabilidade e monitoramento
-- **Dead Letter Channel Engine** — Motor de dead letter channel para processamento
-- **Observability Monitor** — Monitoramento e alertas de observabilidade e monitoramento
-- **Cloud Tasks Queue** — canal de mensagens para dead-letter
+- **Observability Platform** — sistema principal (Encaminha mensagens nao processaveis para canal de dead letter aplicado ao conte)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)

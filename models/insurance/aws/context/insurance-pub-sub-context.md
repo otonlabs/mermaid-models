@@ -17,10 +17,9 @@ Context
 Broadcast de mensagens para multiplos assinantes aplicado ao contexto de plataforma de seguros
 
 ## Componentes Principais
-- **Insurance Gateway** — Gateway principal para plataforma de seguros
-- **Publish-Subscribe Engine** — Motor de publish-subscribe para processamento
-- **Insurance Monitor** — Monitoramento e alertas de plataforma de seguros
-- **SQS Queue** — canal de mensagens para pub-sub
+- **Insurance Platform** — sistema principal (Broadcast de mensagens para multiplos assinantes aplicado ao contexto de platafo)
+- **Ory Security Stack** — Identity, OAuth2, Permissions, Zero Trust Proxy
+- **OPA Policy Engine** — Policy as Code com Rego para authorization e compliance
 
 ## Camada de Segurança
 - **Ory Oathkeeper** — Zero Trust Identity & Access Proxy (authenticators, authorizers, mutators)
