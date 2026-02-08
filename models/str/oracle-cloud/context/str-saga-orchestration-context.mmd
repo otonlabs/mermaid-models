@@ -25,15 +25,15 @@ C4Context
         System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
         System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
         System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
-        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")
+        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
     }
 
     System_Ext(BACEN_STR, "BACEN STR", "Sistema de Transferencia de Reservas")
     System_Ext(Banco_Participante, "Banco Participante", "Banco com conta reserva")
     System_Ext(Camara_LBTR, "Camara LBTR", "Liquidacao bruta em tempo real")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
     System_Ext(monitoring, "OCI Monitoring", "Monitoramento e alertas", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
-    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")
+    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
 
     Rel(Operador_Tesouraria, ory_oathkeeper, "Acessa via proxy", "HTTPS")
     Rel(ory_oathkeeper, ory_kratos, "Valida session/identity", "HTTPS")
@@ -56,3 +56,4 @@ C4Context
     UpdateElementStyle(ory_kratos, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateElementStyle(ory_keto, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateElementStyle(opa_engine, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

@@ -789,6 +789,64 @@ Script que usa `npx @mermaid-js/mermaid-cli` para validar a sintaxe dos arquivos
 
 4. **Corrigir** quaisquer erros de validação
 
+## Requisito: Sprites em TODOS os Elementos C4 Internos
+
+**Todos os elementos C4 que fazem parte da plataforma devem ter o parâmetro `$sprite` com o ícone correspondente da cloud provider.** Nenhum `System`, `Container`, `ContainerDb`, `ContainerQueue`, `Component` interno deve ficar sem ícone visual.
+
+### Elementos que DEVEM ter $sprite
+
+#### C4Context
+- `System(opa_engine, ...)` → ícone WAF/Security da cloud (`waf`)
+- `System(ory_oathkeeper, ...)` → ícone API Gateway da cloud
+- `System(ory_kratos, ...)` → ícone IAM da cloud
+- `System(ory_keto, ...)` → ícone Secret/Key Vault da cloud
+- `System_Ext(ory_hydra, ...)` → ícone API Gateway da cloud
+- `System_Ext(datadog_platform, ...)` → ícone Monitoring da cloud
+
+#### C4Container
+- `Container(opa_sidecar, ...)` → ícone WAF/Security da cloud (`waf`)
+- `ContainerDb(identity_db, ...)` → ícone DB relacional da cloud (`db_rel`)
+- `ContainerDb(keto_db, ...)` → ícone DB relacional da cloud (`db_rel`)
+- `Container(dd_apm, ...)` → ícone Monitoring da cloud
+- `Container(dd_logs, ...)` → ícone Monitoring da cloud
+- `System_Ext(ory_hydra, ...)` → ícone API Gateway da cloud
+- `System_Ext(datadog_platform, ...)` → ícone Monitoring da cloud
+
+#### C4Component
+- `Component(ory_identity_handler, ...)` → ícone IAM da cloud
+- `Component(ory_permission_checker, ...)` → ícone Secret/Key Vault da cloud
+- `Component(opa_policy_evaluator, ...)` → ícone WAF/Security da cloud
+- `Component(dd_tracer, ...)` → ícone Monitoring da cloud
+- `Component(dd_metrics_client, ...)` → ícone Monitoring da cloud
+- `Component(dd_log_enricher, ...)` → ícone Monitoring da cloud
+
+### Regra
+- Elementos `System_Ext` de domínio (BACEN, PSPs, etc.) NÃO precisam de sprite pois representam sistemas externos fora da cloud
+- Elementos `System_Ext` de infraestrutura (Ory Hydra, Datadog Platform, monitoring) DEVEM ter sprite da cloud correspondente
+
+## Requisito: UpdateLayoutConfig para Controle de Grid C4
+
+**Todos os diagramas devem incluir `UpdateLayoutConfig` no final para controlar quantos shapes e boundaries cabem por linha**, evitando que o layout ELK empilhe muitos elementos horizontalmente e cause sobreposição de edges.
+
+### Sintaxe
+```
+UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+```
+
+### Parâmetros
+| Parâmetro | Valor | Descrição |
+|-----------|-------|-----------|
+| `$c4ShapeInRow` | `"3"` | Máximo de shapes (System, Container, Component) por linha — evita linhas muito largas |
+| `$c4BoundaryInRow` | `"1"` | Máximo de boundaries por linha — empilha boundaries verticalmente para melhor routing de edges |
+
+### Posição no Diagrama
+O `UpdateLayoutConfig` deve ser a **última linha** do diagrama, após todos os `UpdateElementStyle`:
+```
+    UpdateElementStyle(...)
+    UpdateElementStyle(...)
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+```
+
 ## Requisito: Layout Limpo sem Sobreposição (ELK Orthogonal Routing)
 
 **Todos os diagramas `.mmd` devem usar o layout ELK otimizado para evitar que linhas (edges) sobreponham caixas (nodes/boundaries)** nos diagramas C4, garantindo legibilidade mesmo em diagramas complexos com múltiplas boundaries (Security Layer, Observability Layer, domínio).
@@ -1007,3 +1065,5 @@ C4Component
 15. Confirmar presença da **Observability Layer** ou componentes Datadog em todos os níveis C4
 16. Confirmar presença do **bloco YAML frontmatter ELK** em todos os `.mmd`: `grep -rl 'layout: elk' models/ --include="*.mmd" | wc -l` (deve ser igual ao total de `.mmd`)
 17. Confirmar que o frontmatter contém `nodePlacementStrategy: NETWORK_SIMPLEX`, `cycleBreakingStrategy: GREEDY` e `c4.diagramMarginX/Y: 25`
+18. Confirmar presença de **$sprite em TODOS os elementos internos** (OPA, Ory, Datadog): `grep -c 'opa_engine\|opa_sidecar\|opa_policy_evaluator' models/**/*.mmd` vs `grep -c 'sprite.*opa_engine\|opa_sidecar.*sprite\|opa_policy_evaluator.*sprite'` — todos devem ter sprite
+19. Confirmar presença de **UpdateLayoutConfig** em todos os `.mmd`: `grep -rl 'UpdateLayoutConfig' models/ --include="*.mmd" | wc -l` (deve ser igual ao total de `.mmd`)

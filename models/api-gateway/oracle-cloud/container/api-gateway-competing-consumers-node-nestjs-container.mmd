@@ -27,21 +27,21 @@ C4Container
         Container(ory_oathkeeper, "Ory Oathkeeper", "Go", "Zero Trust proxy: authenticators, authorizers, mutators", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
         Container(ory_kratos, "Ory Kratos", "Go", "Identity management: registration, login, MFA, sessions", $sprite="img:https://icon.icepanel.io/OCI/svg/Identity-Security/Identity-and-Access-Management.svg")
         Container(ory_keto, "Ory Keto", "Go", "Permissions (Zanzibar): relation tuples, check/expand API", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
-        Container(opa_sidecar, "OPA Policy Engine", "OPA + Rego", "Policy as Code para authorization e compliance")
-        ContainerDb(identity_db, "Identity Store", "Autonomous Database", "Identidades, sessions, credentials")
-        ContainerDb(keto_db, "Keto Store", "Autonomous Database", "Relation tuples e namespaces")
+        Container(opa_sidecar, "OPA Policy Engine", "OPA + Rego", "Policy as Code para authorization e compliance", $sprite="img:https://icon.icepanel.io/OCI/svg/Security/Vault.svg")
+        ContainerDb(identity_db, "Identity Store", "Autonomous Database", "Identidades, sessions, credentials", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/Autonomous-Database.svg")
+        ContainerDb(keto_db, "Keto Store", "Autonomous Database", "Relation tuples e namespaces", $sprite="img:https://icon.icepanel.io/OCI/svg/Oracle-Database/Autonomous-Database.svg")
     }
 
     Container_Boundary(obs0, "Observability Layer") {
         Container(dd_agent, "Datadog Agent", "DaemonSet", "Coleta metricas, traces e logs de todos os containers", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
-        Container(dd_apm, "APM Tracer", "dd-trace-js", "Distributed tracing com auto-instrumentacao")
-        Container(dd_logs, "Log Forwarder", "Datadog Agent", "Coleta e envia logs para Datadog Log Management")
+        Container(dd_apm, "APM Tracer", "dd-trace-js", "Distributed tracing com auto-instrumentacao", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
+        Container(dd_logs, "Log Forwarder", "Datadog Agent", "Coleta e envia logs para Datadog Log Management", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
     }
 
     System_Ext(External_Partner, "External Partner", "Parceiro externo consumidor")
     System_Ext(Internal_Microservice, "Internal Microservice", "Microservico interno")
-    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")
-    System_Ext(datadog_platform, "Datadog Platform", "SaaS: APM, Logs, Metrics, Dashboards, Alerts")
+    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)", $sprite="img:https://icon.icepanel.io/OCI/svg/Developer-Services/API-Gateway.svg")
+    System_Ext(datadog_platform, "Datadog Platform", "SaaS: APM, Logs, Metrics, Dashboards, Alerts", $sprite="img:https://icon.icepanel.io/OCI/svg/Observability-Management/Monitoring.svg")
 
     Rel(API_Consumer, ory_oathkeeper, "Acessa via proxy", "HTTPS")
     Rel(ory_oathkeeper, ory_kratos, "Valida session", "HTTPS")
@@ -77,3 +77,4 @@ C4Container
     UpdateElementStyle(dd_agent, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateElementStyle(dd_apm, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
     UpdateElementStyle(dd_logs, $fontColor="#FFFFFF", $bgColor="#F80000", $borderColor="#C74634")
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

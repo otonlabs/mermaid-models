@@ -21,12 +21,12 @@ C4Component
         Component(Message_Logger, "Message Logger", "Spring Data JPA", "Responsavel por message logger", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
         Component(Audit_Writer, "Audit Writer", "Spring Data JPA", "Responsavel por audit writer", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
         Component(Compliance_Reporter, "Compliance Reporter", "Spring Boot 3", "Responsavel por compliance reporter", $sprite="img:https://icon.icepanel.io/Azure/svg/Compute/App-Services.svg")
-        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")
-        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")
-        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")
-        Component(dd_tracer, "DD Tracer", "dd-trace-java", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")
-        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")
-        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")
+        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA", $sprite="img:https://icon.icepanel.io/Azure/svg/Identity/Entra-ID.svg")
+        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar", $sprite="img:https://icon.icepanel.io/Azure/svg/Security/Key-Vaults.svg")
+        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance", $sprite="img:https://icon.icepanel.io/Azure/svg/Networking/Front-Doors.svg")
+        Component(dd_tracer, "DD Tracer", "dd-trace-java", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
+        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
+        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs", $sprite="img:https://icon.icepanel.io/Azure/svg/Management-Governance/Monitor.svg")
     }
 
     Rel(api_layer, ory_identity_handler, "Valida identity/session", "Internal")
@@ -52,3 +52,4 @@ C4Component
     UpdateElementStyle(dd_tracer, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
     UpdateElementStyle(dd_metrics_client, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
     UpdateElementStyle(dd_log_enricher, $fontColor="#FFFFFF", $bgColor="#0078D4", $borderColor="#002050")
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

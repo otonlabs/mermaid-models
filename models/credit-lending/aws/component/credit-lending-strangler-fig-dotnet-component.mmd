@@ -22,12 +22,12 @@ C4Component
         Component(Legacy_Adapter, "Legacy Adapter", "ASP.NET Core", "Responsavel por legacy adapter", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
         Component(Feature_Toggle, "Feature Toggle", "EF Core", "Responsavel por feature toggle", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
         Component(Migration_Tracker, "Migration Tracker", "EF Core", "Responsavel por migration tracker", $sprite="img:https://icon.icepanel.io/AWS/svg/Containers/Elastic-Container-Service.svg")
-        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")
-        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")
-        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")
-        Component(dd_tracer, "DD Tracer", "dd-trace-dotnet", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")
-        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")
-        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")
+        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Cognito.svg")
+        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/Secrets-Manager.svg")
+        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance", $sprite="img:https://icon.icepanel.io/AWS/svg/Security-Identity-Compliance/WAF.svg")
+        Component(dd_tracer, "DD Tracer", "dd-trace-dotnet", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
+        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
+        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs", $sprite="img:https://icon.icepanel.io/AWS/svg/Management-Governance/CloudWatch.svg")
     }
 
     Rel(api_layer, ory_identity_handler, "Valida identity/session", "Internal")
@@ -54,3 +54,4 @@ C4Component
     UpdateElementStyle(dd_tracer, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateElementStyle(dd_metrics_client, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
     UpdateElementStyle(dd_log_enricher, $fontColor="#232F3E", $bgColor="#FF9900", $borderColor="#232F3E")
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

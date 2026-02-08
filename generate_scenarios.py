@@ -584,18 +584,18 @@ def gen_context(domain_key, domain, cloud, scenario, is_eip):
     L.append(f'        System(ory_oathkeeper, "Ory Oathkeeper", "Zero Trust Identity & Access Proxy"{sprite(cloud, cloud_svc(cloud, "api_gw")[1])})')
     L.append(f'        System(ory_kratos, "Ory Kratos", "Identity Management: login, registration, MFA"{sprite(cloud, cloud_svc(cloud, "iam")[1])})')
     L.append(f'        System(ory_keto, "Ory Keto", "Permission system (Google Zanzibar) com relation tuples"{sprite(cloud, cloud_svc(cloud, "secret")[1])})')
-    L.append(f'        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance")')
+    L.append(f'        System(opa_engine, "OPA Policy Engine", "Policy as Code com Rego para authorization e compliance"{sprite(cloud, cloud_svc(cloud, "waf")[1])})')
     L.append("    }")
     styled.extend(["ory_oathkeeper", "ory_kratos", "ory_keto", "opa_engine"])
     L.append("")
 
     for e_name, e_desc in domain["ext_systems"][:3]:
         L.append(f'    System_Ext({sid(e_name)}, "{e_name}", "{e_desc}")')
-    L.append(f'    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")')
+    L.append(f'    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)"{sprite(cloud, cloud_svc(cloud, "api_gw")[1])})')
 
     mon_name, mon_icon = cloud_svc(cloud, "monitoring")
     L.append(f'    System_Ext(monitoring, "{mon_name}", "Monitoramento e alertas"{sprite(cloud, mon_icon)})')
-    L.append(f'    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM")')
+    L.append(f'    System_Ext(datadog_platform, "Datadog", "Observabilidade: APM, Logs, Metrics, SIEM"{sprite(cloud, mon_icon)})')
     L.append("")
 
     # Relationships
@@ -623,6 +623,7 @@ def gen_context(domain_key, domain, cloud, scenario, is_eip):
 
     L.append("")
     L.extend(style_lines(cloud, styled))
+    L.append('    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")')
     return "\n".join(L)
 
 
@@ -699,9 +700,9 @@ def gen_container(domain_key, domain, cloud, scenario, is_eip, stack):
     L.append(f'        Container(ory_oathkeeper, "Ory Oathkeeper", "Go", "Zero Trust proxy: authenticators, authorizers, mutators"{sprite(cloud, cloud_svc(cloud, "api_gw")[1])})')
     L.append(f'        Container(ory_kratos, "Ory Kratos", "Go", "Identity management: registration, login, MFA, sessions"{sprite(cloud, cloud_svc(cloud, "iam")[1])})')
     L.append(f'        Container(ory_keto, "Ory Keto", "Go", "Permissions (Zanzibar): relation tuples, check/expand API"{sprite(cloud, cloud_svc(cloud, "secret")[1])})')
-    L.append(f'        Container(opa_sidecar, "OPA Policy Engine", "OPA + Rego", "Policy as Code para authorization e compliance")')
-    L.append(f'        ContainerDb(identity_db, "Identity Store", "{db_name}", "Identidades, sessions, credentials")')
-    L.append(f'        ContainerDb(keto_db, "Keto Store", "{db_name}", "Relation tuples e namespaces")')
+    L.append(f'        Container(opa_sidecar, "OPA Policy Engine", "OPA + Rego", "Policy as Code para authorization e compliance"{sprite(cloud, cloud_svc(cloud, "waf")[1])})')
+    L.append(f'        ContainerDb(identity_db, "Identity Store", "{db_name}", "Identidades, sessions, credentials"{sprite(cloud, db_icon)})')
+    L.append(f'        ContainerDb(keto_db, "Keto Store", "{db_name}", "Relation tuples e namespaces"{sprite(cloud, db_icon)})')
     L.append("    }")
     styled.extend(["ory_oathkeeper", "ory_kratos", "ory_keto", "opa_sidecar", "identity_db", "keto_db"])
     L.append("")
@@ -710,16 +711,17 @@ def gen_container(domain_key, domain, cloud, scenario, is_eip, stack):
     dd_lib = DD_TRACE_LIBS.get(stack["id"], "dd-trace")
     L.append(f'    Container_Boundary(obs0, "Observability Layer") {{')
     L.append(f'        Container(dd_agent, "Datadog Agent", "DaemonSet", "Coleta metricas, traces e logs de todos os containers"{sprite(cloud, cloud_svc(cloud, "monitoring")[1])})')
-    L.append(f'        Container(dd_apm, "APM Tracer", "{dd_lib}", "Distributed tracing com auto-instrumentacao")')
-    L.append(f'        Container(dd_logs, "Log Forwarder", "Datadog Agent", "Coleta e envia logs para Datadog Log Management")')
+    mon_name_obs, mon_icon_obs = cloud_svc(cloud, "monitoring")
+    L.append(f'        Container(dd_apm, "APM Tracer", "{dd_lib}", "Distributed tracing com auto-instrumentacao"{sprite(cloud, mon_icon_obs)})')
+    L.append(f'        Container(dd_logs, "Log Forwarder", "Datadog Agent", "Coleta e envia logs para Datadog Log Management"{sprite(cloud, mon_icon_obs)})')
     L.append("    }")
     styled.extend(["dd_agent", "dd_apm", "dd_logs"])
     L.append("")
 
     for e_name, e_desc in domain["ext_systems"][:2]:
         L.append(f'    System_Ext({sid(e_name)}, "{e_name}", "{e_desc}")')
-    L.append(f'    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)")')
-    L.append(f'    System_Ext(datadog_platform, "Datadog Platform", "SaaS: APM, Logs, Metrics, Dashboards, Alerts")')
+    L.append(f'    System_Ext(ory_hydra, "Ory Hydra", "OAuth 2.0 & OpenID Connect Server (FAPI)"{sprite(cloud, cloud_svc(cloud, "api_gw")[1])})')
+    L.append(f'    System_Ext(datadog_platform, "Datadog Platform", "SaaS: APM, Logs, Metrics, Dashboards, Alerts"{sprite(cloud, mon_icon_obs)})')
     L.append("")
 
     # Relationships
@@ -756,6 +758,7 @@ def gen_container(domain_key, domain, cloud, scenario, is_eip, stack):
 
     L.append("")
     L.extend(style_lines(cloud, styled))
+    L.append('    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")')
     return "\n".join(L)
 
 
@@ -825,16 +828,17 @@ def gen_component(domain_key, domain, cloud, scenario, is_eip, stack, variation_
         styled.append(comp_id)
 
     # Security components - Ory + OPA
-    L.append(f'        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA")')
-    L.append(f'        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar")')
-    L.append(f'        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance")')
+    L.append(f'        Component(ory_identity_handler, "Identity Handler", "Ory Kratos Client", "Gerencia authentication, session e MFA"{sprite(cloud, cloud_svc(cloud, "iam")[1])})')
+    L.append(f'        Component(ory_permission_checker, "Permission Checker", "Ory Keto Client", "Check/Expand API para RBAC/ABAC via Zanzibar"{sprite(cloud, cloud_svc(cloud, "secret")[1])})')
+    L.append(f'        Component(opa_policy_evaluator, "OPA Policy Evaluator", "OPA REST Client", "Avalia Rego policies para authorization e compliance"{sprite(cloud, cloud_svc(cloud, "waf")[1])})')
     styled.extend(["ory_identity_handler", "ory_permission_checker", "opa_policy_evaluator"])
 
     # Observability components - Datadog
     dd_lib = DD_TRACE_LIBS.get(stack["id"], "dd-trace")
-    L.append(f'        Component(dd_tracer, "DD Tracer", "{dd_lib}", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue")')
-    L.append(f'        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions")')
-    L.append(f'        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs")')
+    mon_name_c, mon_icon_c = cloud_svc(cloud, "monitoring")
+    L.append(f'        Component(dd_tracer, "DD Tracer", "{dd_lib}", "Instrumentacao automatica de spans para HTTP, gRPC, DB, Queue"{sprite(cloud, mon_icon_c)})')
+    L.append(f'        Component(dd_metrics_client, "Metrics Client", "DogStatsD Client", "Emite custom metrics: counters, gauges, histograms, distributions"{sprite(cloud, mon_icon_c)})')
+    L.append(f'        Component(dd_log_enricher, "Log Enricher", "Datadog Log Correlation", "Injeta trace_id e span_id nos logs para correlacao APM-Logs"{sprite(cloud, mon_icon_c)})')
     styled.extend(["dd_tracer", "dd_metrics_client", "dd_log_enricher"])
     L.append("    }")
     L.append("")
@@ -863,6 +867,7 @@ def gen_component(domain_key, domain, cloud, scenario, is_eip, stack, variation_
 
     L.append("")
     L.extend(style_lines(cloud, styled))
+    L.append('    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")')
     return "\n".join(L)
 
 
